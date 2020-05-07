@@ -1,7 +1,7 @@
 package org.http4s
 package finagle
 
-import client._
+import org.http4s.client._
 import cats.effect._
 import cats.syntax.functor._
 import com.twitter.finagle.{Http, Service}
