@@ -22,8 +22,8 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   val service = Finagle.mkService{HttpRoutes.of[IO] {
     case req @ _ -> Root / "echo" => Ok(req.as[String])
     case GET -> Root / "simple" => Ok("simple path")
-    case GET -> Root / "chunked" => Response[IO](Ok)
-          .withEntity(Stream.emits("chunk".toSeq.map(_.toString)).covary[IO])
+    case req @ POST -> Root / "chunked" => Response[IO](Ok)
+          .withEntity(Stream.emits(req.as[String].unsafeRunSync.toSeq.map(_.toString)).covary[IO])
         .pure[IO]
     case GET -> Root / "delayed" => timer.sleep(1.second) *>
       Ok("delayed path")
@@ -45,12 +45,21 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     client._2.unsafeRunSync()
   }
   val localhost = uri("http://localhost:8080")
-  test("Repeat a simple request") {
+
+  test("GET") {
+    val reqs = List(localhost / "simple", localhost / "delayed", localhost / "no-content")
     assertEquals(
-      (0 to 10).map(_=>client._1.expect[String](localhost / "simple")).toList.parSequence.unsafeRunSync(),
-      (0 to 10).map(_=>"simple path").toList
+      reqs.parTraverse(client._1.expect[String](_)).unsafeRunSync(),
+      List("simple path", "delayed path", "")
     )
   }
+
+  property("GET stream body") { forAll {(body: String)=>
+      assertEquals(
+        client._1.expect[String](POST(body, localhost / "chunked")).unsafeRunSync(),
+        body
+      )
+  }}
 
   test("POST empty") {
     assertEquals(
