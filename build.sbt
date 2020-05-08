@@ -36,5 +36,9 @@ lazy val root = (project in file("."))
       "org.http4s"  %% "http4s-core" % Http4sVersion,
       "org.http4s"  %% "http4s-client" % Http4sVersion,
       "com.twitter" %% "finagle-http" % FinagleVersion,
-    )
+      "org.scalameta" %% "munit" % "0.7.5" % Test,
+      "org.scalameta" %% "munit-scalacheck" % "0.7.5" % Test,
+      "org.http4s"  %% "http4s-dsl" % Http4sVersion % Test,
+    ),
+    testFrameworks += new TestFramework("munit.Framework"),
   )
