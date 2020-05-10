@@ -36,14 +36,16 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
 
   var client: (Client[IO], IO[Unit]) = null
   var server: com.twitter.finagle.ListeningServer = null
-  override def beforeAll = {
-    client = Finagle.mkClient[IO]("localhost:8080").allocated.unsafeRunSync
+  override def beforeAll(): Unit = {
+    client = Finagle.mkClient[IO]("localhost:8080").allocated[IO, Client[IO]].unsafeRunSync
     server = com.twitter.finagle.Http.serve(":8080", service)
+    ()
   }
 
-  override def afterAll = {
+  override def afterAll():Unit = {
     server.close()
     client._2.unsafeRunSync()
+    ()
   }
   val localhost = unsafeFromString("http://localhost:8080")
 

@@ -23,7 +23,10 @@ inScope(Scope.GlobalScope)(
     pgpPublicRing := file(".") / ".gnupg" / "pubring.asc",
     pgpSecretRing := file(".") / ".gnupg" / "secring.asc",
     releaseEarlyWith := SonatypePublisher,
-    scalaVersion := dotty
+    /* TODO: Everything compile in dotty, BUT runtime error
+     java.lang.NoSuchMethodError: org.http4s.dsl.io$.GET()Lorg/http4s/Method$PermitsBody;
+     */
+    scalaVersion := scala213
   )
 )
 
@@ -39,8 +42,8 @@ lazy val root = (project in file("."))
       ("org.http4s"  %% "http4s-core" % Http4sVersion).withDottyCompat(scalaVersion.value),
       ("org.http4s"  %% "http4s-client" % Http4sVersion).withDottyCompat(scalaVersion.value),
       ("com.twitter" %% "finagle-http" % FinagleVersion).withDottyCompat(scalaVersion.value),
-      ("org.scalameta" %% "munit" % "0.7.5" % Test).withDottyCompat(scalaVersion.value),
-      ("org.scalameta" %% "munit-scalacheck" % "0.7.5" % Test).withDottyCompat(scalaVersion.value),
+      "org.scalameta" %% "munit" % "0.7.5" % Test,
+      "org.scalameta" %% "munit-scalacheck" % "0.7.5" % Test,
       ("org.http4s"  %% "http4s-dsl" % Http4sVersion % Test).withDottyCompat(scalaVersion.value),
     ),
     testFrameworks += new TestFramework("munit.Framework"),
