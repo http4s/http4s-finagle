@@ -6,16 +6,16 @@ val supportedScalaVersions = List(scala213,scala212)
 
 inScope(Scope.GlobalScope)(
   List(
-    organization := "us.oyanglul",
+    organization := "org.http4s",
     licenses := Seq("Apache License 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-    homepage := Some(url("https://github.com/jcouyang/http4s-finagle")),
+    homepage := Some(url("https://github.com/http4s/http4s-finagle")),
     developers := List(
       Developer("jcouyang", "Jichao Ouyang", "oyanglulu@gmail.com", url("https://github.com/jcouyang"))
     ),
     scmInfo := Some(
       ScmInfo(
-        url("https://github.com/jcouyang/http4s-finagle"),
-        "scm:git@github.com:jcouyang/http4s-finagle.git"
+        url("https://github.com/http4s/http4s-finagle"),
+        "scm:git@github.com:http4s/http4s-finagle.git"
       )
     ),
     pgpPublicRing := file(".") / ".gnupg" / "pubring.asc",
