@@ -8,6 +8,7 @@ import Uri._
 import org.http4s.dsl.io._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
+import munit._
 import cats.implicits._
 import scala.concurrent.ExecutionContext
 import client._
@@ -17,7 +18,7 @@ import fs2._
 import org.scalacheck.Prop._
 
 class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
-  implicit val context = IO.contextShift(ExecutionContext.global)
+  implicit val context: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
   implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
   val service = Finagle.mkService{HttpRoutes.of[IO] {
     case req @ _ -> Root / "echo" => Ok(req.as[String])
@@ -36,7 +37,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   var client: (Client[IO], IO[Unit]) = null
   var server: com.twitter.finagle.ListeningServer = null
   override def beforeAll = {
-    client = Finagle.mkClient[IO]("localhost:8080").allocated.unsafeRunSync()
+    client = Finagle.mkClient[IO]("localhost:8080").allocated.unsafeRunSync
     server = com.twitter.finagle.Http.serve(":8080", service)
   }
 
@@ -44,7 +45,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     server.close()
     client._2.unsafeRunSync()
   }
-  val localhost = uri("http://localhost:8080")
+  val localhost = unsafeFromString("http://localhost:8080")
 
   test("GET") {
     val reqs = List(localhost / "simple", localhost / "delayed", localhost / "no-content")
@@ -109,8 +110,8 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
       )
     }
   }
-    implicit val arbMethod = Arbitrary{ Gen.oneOf (Method.all) }
-    implicit val arbVersion = Arbitrary{ Gen.oneOf(List(HttpVersion.`HTTP/1.0`,
+    implicit val arbMethod:Arbitrary[Method] = Arbitrary{ Gen.oneOf (Method.all) }
+    implicit val arbVersion: Arbitrary[HttpVersion] = Arbitrary{ Gen.oneOf(List(HttpVersion.`HTTP/1.0`,
       HttpVersion.`HTTP/1.1`,
       HttpVersion.`HTTP/2.0`
     )) }

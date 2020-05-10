@@ -2,7 +2,9 @@ import Dependencies._
 
 val scala213 = "2.13.1"
 val scala212 = "2.12.10"
-val supportedScalaVersions = List(scala213,scala212)
+val dotty = "0.24.0-RC1"
+
+val supportedScalaVersions = List(scala213,scala212,dotty)
 
 inScope(Scope.GlobalScope)(
   List(
@@ -21,7 +23,7 @@ inScope(Scope.GlobalScope)(
     pgpPublicRing := file(".") / ".gnupg" / "pubring.asc",
     pgpSecretRing := file(".") / ".gnupg" / "secring.asc",
     releaseEarlyWith := SonatypePublisher,
-    scalaVersion := scala213
+    scalaVersion := dotty
   )
 )
 
@@ -32,13 +34,14 @@ lazy val root = (project in file("."))
   .settings(
     name := "Http4s Finagle",
     crossScalaVersions := supportedScalaVersions,
+    scalacOptions ++= Seq("-language:implicitConversions"),
     libraryDependencies ++= Seq(
-      "org.http4s"  %% "http4s-core" % Http4sVersion,
-      "org.http4s"  %% "http4s-client" % Http4sVersion,
-      "com.twitter" %% "finagle-http" % FinagleVersion,
-      "org.scalameta" %% "munit" % "0.7.5" % Test,
-      "org.scalameta" %% "munit-scalacheck" % "0.7.5" % Test,
-      "org.http4s"  %% "http4s-dsl" % Http4sVersion % Test,
+      ("org.http4s"  %% "http4s-core" % Http4sVersion).withDottyCompat(scalaVersion.value),
+      ("org.http4s"  %% "http4s-client" % Http4sVersion).withDottyCompat(scalaVersion.value),
+      ("com.twitter" %% "finagle-http" % FinagleVersion).withDottyCompat(scalaVersion.value),
+      ("org.scalameta" %% "munit" % "0.7.5" % Test).withDottyCompat(scalaVersion.value),
+      ("org.scalameta" %% "munit-scalacheck" % "0.7.5" % Test).withDottyCompat(scalaVersion.value),
+      ("org.http4s"  %% "http4s-dsl" % Http4sVersion % Test).withDottyCompat(scalaVersion.value),
     ),
     testFrameworks += new TestFramework("munit.Framework"),
   )
