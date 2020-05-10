@@ -28,7 +28,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     case GET -> Root / "delayed" => timer.sleep(1.second) *>
       Ok("delayed path")
     case GET -> Root / "no-content" => NoContent()
-    case GET -> Root / "not-found" => NotFound("not fount")
+    case GET -> Root / "not-found" => NotFound("not found")
     case GET -> Root / "empty-not-found"  => NotFound()
     case GET -> Root / "internal-error" => InternalServerError()
   }.orNotFound}
@@ -65,6 +65,24 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     assertEquals(
       client._1.expect[String](POST(localhost / "echo")).unsafeRunSync(),
       ""
+    )
+  }
+
+  test("GET not found") {
+    assertEquals(
+      client._1.status(GET(localhost / "not-found")).unsafeRunSync(),
+      Status.NotFound
+    )
+    assertEquals(
+      client._1.status(GET(localhost / "empty-not-found")).unsafeRunSync(),
+      Status.NotFound
+    )
+  }
+
+  test("GET 500") {
+    assertEquals(
+      client._1.status(GET(localhost / "internal-error")).unsafeRunSync(),
+      Status.InternalServerError
     )
   }
 
