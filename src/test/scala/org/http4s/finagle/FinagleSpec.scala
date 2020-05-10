@@ -112,11 +112,13 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
       )
     }
   }
-    implicit val arbMethod:Arbitrary[Method] = Arbitrary{ Gen.oneOf (Method.all) }
-    implicit val arbVersion: Arbitrary[HttpVersion] = Arbitrary{ Gen.oneOf(List(HttpVersion.`HTTP/1.0`,
-      HttpVersion.`HTTP/1.1`,
-      HttpVersion.`HTTP/2.0`
-    )) }
+  implicit val arbMethod:Arbitrary[Method] = Arbitrary{
+    Gen.oneOf(Method.all).suchThat(!List(Method.CONNECT).contains(_))
+  }
+  implicit val arbVersion: Arbitrary[HttpVersion] = Arbitrary{ Gen.oneOf(List(HttpVersion.`HTTP/1.0`,
+    HttpVersion.`HTTP/1.1`,
+    HttpVersion.`HTTP/2.0`
+  )) }
 
   // need more observation and collect failed cases
   property("arbitrary Methods x Versions x Body".flaky) {
