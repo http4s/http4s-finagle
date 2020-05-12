@@ -129,10 +129,16 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
         httpVersion = version,
         body = Stream.emits(body.getBytes()).covary[IO]
       )
-      assertEquals(
-        client._1.expect[String](req).unsafeRunSync,
-        body
-      )
+      method match {
+        case Method.HEAD => assertEquals(
+          client._1.status(req).unsafeRunSync,
+          Ok
+        )
+        case _ => assertEquals(
+          client._1.expect[String](req).unsafeRunSync,
+          body
+        )
+      }
     }
   }
 }
