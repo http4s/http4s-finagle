@@ -1,6 +1,21 @@
 # Http4s Finagle
 
-![Build and Test](https://github.com/http4s/http4s-finagle/workflows/Build%20and%20Test/badge.svg)
+[![Build](https://github.com/http4s/http4s-finagle/workflows/Build%20and%20Test/badge.svg)](https://github.com/http4s/http4s-finagle/actions?query=workflow%3A%22Build+and+Test%22)
+[![](https://index.scala-lang.org/http4s/http4s-finagle/latest.svg?v=1)](https://index.scala-lang.org/http4s/http4s-finagle)\
+![Cats Friendly Badge](https://typelevel.org/cats/img/cats-badge-tiny.png) 
+
+if your `http4s` version is `0.21.x`
+simply set `http4s-finagle` to `0.21+`
+```scala
+libraryDependencies += "org.http4s" %% "http4s-finagle" % "0.21+"
+```
+
+if in any circumstance you need fix the finagle version(most cases not, finagle api is quite stable)
+```
+libraryDependencies += "org.http4s" %% "http4s-finagle" % "0.21.4-20.4.1-0"
+                                                           ^      ^      ^
+                                                      http4s   fingale   patch
+```
 
 ## Server
 
@@ -28,4 +43,4 @@ Finagle.mkClient[IO](Http.client.withTls(host).newService(s"$host:443")).use {
 }
 ```
 
-Please refer to the [Test](src/test/scala/org/http4s/client/finagle-client/FinagleSpec.scala) which is fully functional server and client.
+Please refer to the [Test](src/test/scala/org/http4s/finagle/FinagleSpec.scala) which is fully functional server and client.
