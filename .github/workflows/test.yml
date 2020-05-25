@@ -25,7 +25,5 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: "2.13 Test"
-      run: sbt "++ 2.13.1 test"
     - name: "2.12 Test"
-      run: sbt "++ 2.12.10 test"
+      run: sbt 'set http4sVersion:="0.20.23";++ "2.12.10"; test'
