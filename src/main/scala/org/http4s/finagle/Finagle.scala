@@ -9,6 +9,7 @@ import com.twitter.finagle.http.{Request => Req, Response => Resp, Method, Reque
 import com.twitter.util.{Future, Return, Throw}
 import com.twitter.io._
 import cats.syntax.flatMap._
+import cats.syntax.show._
 import fs2.{Chunk, Stream}
 import cats.Functor
 import com.twitter.util.Promise
@@ -57,7 +58,7 @@ object Finagle {
   private def toFinagleResp[F[_]: Concurrent](resp: Response[F]): F[Resp] = {
     import com.twitter.finagle.http.{Status}
     val status = Status(resp.status.code)
-    val headers = resp.headers.toList.map(h => (h.name.toString, h.value))
+    val headers = resp.headers.toList.map(h => (h.name.show, h.value))
     val finagleResp = Resp(status)
     headers.foreach{case (k, v) => finagleResp.headerMap.add(k,v)}
     val writeBody = if (resp.isChunked) {
@@ -75,8 +76,8 @@ object Finagle {
 
   private def toFinagleReq[F[_]](req: Request[F])(implicit F: Concurrent[F]): F[Req] = {
     val method = Method(req.method.name)
-    val reqheaders = req.headers.toList.map(h => (h.name.toString, h.value)).toMap
-    val reqBuilder = RequestBuilder().url(req.uri.toString).addHeaders(reqheaders)
+    val reqheaders = req.headers.toList.map(h => (h.name.show, h.value)).toMap
+    val reqBuilder = RequestBuilder().url(req.uri.toString()).addHeaders(reqheaders)
     if (req.isChunked) {
       val request = reqBuilder.build(method, None)
       request.headerMap.remove("Transfer-Encoding")
