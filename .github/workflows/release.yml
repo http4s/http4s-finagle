@@ -28,7 +28,7 @@ jobs:
         mkdir -p .gnupg
         echo $GPG_SEC | base64 --decode > .gnupg/secring.asc
         echo $GPG_PUB | base64 --decode > .gnupg/pubring.asc
-        sbt 'set http4sVersion:="0.20.23";++ "2.12.10"; releaseEarly"
+        sbt 'set http4sVersion:="0.20.23";++ "2.12.10"; releaseEarly'
       env:
         GPG_SEC: ${{ secrets.GPG_SEC }}
         GPG_PUB: ${{ secrets.GPG_PUB }}
