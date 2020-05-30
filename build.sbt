@@ -39,12 +39,13 @@ lazy val root = (project in file("."))
     crossScalaVersions := supportedScalaVersions,
     scalacOptions ++= Seq("-language:implicitConversions"),
     libraryDependencies ++= Seq(
-      ("org.http4s"  %% "http4s-core" % Http4sVersion).withDottyCompat(scalaVersion.value),
-      ("org.http4s"  %% "http4s-client" % Http4sVersion).withDottyCompat(scalaVersion.value),
-      ("com.twitter" %% "finagle-http" % FinagleVersion).withDottyCompat(scalaVersion.value),
-      "org.scalameta" %% "munit" % "0.7.8" % Test,
-      "org.scalameta" %% "munit-scalacheck" % "0.7.8" % Test,
-      ("org.http4s"  %% "http4s-dsl" % Http4sVersion % Test).withDottyCompat(scalaVersion.value),
+      "org.http4s"  %% "http4s-core" % Http4sVersion,
+      "org.http4s"  %% "http4s-client" % Http4sVersion,
+      "com.twitter" %% "finagle-http" % FinagleVersion,
+      "org.http4s"  %% "http4s-dsl" % Http4sVersion % Test,
+    ).map(_.withDottyCompat(scalaVersion.value)) ++ Seq(
+      "org.scalameta" %% "munit" % "0.7.7" % Test,
+      "org.scalameta" %% "munit-scalacheck" % "0.7.7" % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
   )
