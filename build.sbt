@@ -30,7 +30,7 @@ inScope(Scope.GlobalScope)(
   )
 )
 
-val Http4sVersion = "0.21.4"
+val Http4sVersion = "0.21.5"
 val FinagleVersion = "20.6.0"
 
 lazy val root = (project in file("."))
