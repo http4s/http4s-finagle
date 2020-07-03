@@ -2,9 +2,9 @@ import Dependencies._
 
 val scala213 = "2.13.1"
 val scala212 = "2.12.10"
-val dotty = "0.24.0-RC1"
-
-val supportedScalaVersions = List(scala213,scala212,dotty)
+val dotty24 = "0.24.0-RC1"
+val dotty25 = "0.25.0-RC2"
+val supportedScalaVersions = List(scala213,scala212,dotty24,dotty25)
 
 inScope(Scope.GlobalScope)(
   List(
@@ -30,7 +30,7 @@ inScope(Scope.GlobalScope)(
   )
 )
 
-val Http4sVersion = "0.21.6"
+val Http4sVersion = "1.0.0-M3"
 val FinagleVersion = "20.6.0"
 
 lazy val root = (project in file("."))
