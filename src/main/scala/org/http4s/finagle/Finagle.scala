@@ -5,7 +5,7 @@ import org.http4s.client._
 import cats.effect._
 import cats.syntax.functor._
 import com.twitter.finagle.{Http, Service}
-import com.twitter.finagle.http.{Request => Req, Response => Resp, Method, RequestBuilder}
+import com.twitter.finagle.http.{Request => Req, Response => Resp, Method, Version}
 import com.twitter.util.{Future, Return, Throw}
 import com.twitter.io._
 import cats.syntax.flatMap._
@@ -76,17 +76,27 @@ object Finagle {
 
   private def toFinagleReq[F[_]](req: Request[F])(implicit F: Concurrent[F]): F[Req] = {
     val method = Method(req.method.name)
-    val reqheaders = req.headers.toList.map(h => (h.name.show, h.value)).toMap
-    val reqBuilder = RequestBuilder().url(req.uri.toString()).addHeaders(reqheaders)
+    val version = Version(req.httpVersion.major, req.httpVersion.minor)
+    val request = Req(version, method, req.uri.toString)
+
+    req.headers.foreach {
+      case Header(field, value) =>
+        request.headerMap.add(field.value, value)
+    }
+
     if (req.isChunked) {
-      val request = reqBuilder.build(method, None)
       request.headerMap.remove("Transfer-Encoding")
       request.setChunked(true)
       Concurrent[F].start(streamBody(req.body, request.writer).compile.drain).as(request)
     } else {
       req.as[Array[Byte]].map { b =>
-        val body = if (b.isEmpty) None else Some(Buf.ByteArray.Owned(b))
-        reqBuilder.build(method, body)
+        if(b.nonEmpty) {
+          val content = Buf.ByteArray.Owned(b)
+          request.content = content
+          request.contentLength = content.length
+        }
+
+        request
       }
     }
   }
