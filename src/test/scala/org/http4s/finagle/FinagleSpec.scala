@@ -120,14 +120,16 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     HttpVersion.`HTTP/2.0`
   )) }
 
-  // need more observation and collect failed cases
-  property("arbitrary Methods x Versions x Body".flaky) {
+  property("arbitrary Methods x Versions x Body") {
     forAll {(method: Method, body: String, version: HttpVersion) =>
+      val bodyUtf8Bytes = body.getBytes("UTF-8")
+      val bodyUtf8 = new String(bodyUtf8Bytes, "UTF-8")
+
       val req = Request[IO](
         method = method,
         uri = localhost /"echo" ,
         httpVersion = version,
-        body = Stream.emits(body.getBytes()).covary[IO]
+        body = Stream.emits(bodyUtf8Bytes).covary[IO]
       )
       method match {
         case Method.HEAD => assertEquals(
@@ -136,7 +138,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
         )
         case _ => assertEquals(
           client._1.expect[String](req).unsafeRunSync,
-          body
+          bodyUtf8
         )
       }
     }
