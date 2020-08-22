@@ -1,0 +1,180 @@
+<!-- This page was last generated on 2020-08-22 -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+        <title>Why Finagle x Http4s?</title>
+
+        <link rel="icon" type="image/png" href="/images/favicon.png">
+
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/dottydoc.css">
+        <link rel="stylesheet" href="/css/color-brewer.css"><!-- hljs theme -->
+
+        
+            <link rel="stylesheet" href="/css/toolbar.css">
+        
+            <link rel="stylesheet" href="/css/sidebar.css">
+        
+
+        <script src="/js/jquery.min.js"></script>
+    </head>
+    <body>
+        <header>
+    <nav class="navbar navbar-expand navbar-dark fixed-top">
+        <a id="menu-icon" title="Menu" aria-label="Menu">
+            <i class="fas fa-bars"></i>
+        </a>
+        <a id="search-icon" title="Search" aria-label="Search">
+            <i class="fas fa-search"></i>
+        </a>
+        <span id="searchbar">
+            <input id="search-api-input" type="text" class="form-control" placeholder="Search API" aria-label="Search API">
+            <input id="baseurl-input" type="hidden" value="">
+        </span>
+        <div class="navbar-brand">
+            
+            <a href="/docs/index.html">
+                <div class="project-details">
+                    <h1>Http4s Finagle Documentation</h1>
+                    <h2></h2>
+                </div>
+            </a>
+        </div>
+
+        
+    </nav>
+</header>
+
+<nav class="sidebar">
+    <ul class="toc">
+        <!-- Redacted documents -->
+        
+            <li class="leaf"><a href="/docs/install.html" >Installation</a></li>
+        
+            <li class="leaf"><a href="/docs/quick-start.html" >Quick Start</a></li>
+        
+            <li class="leaf"><a href="/docs/finagle.html" class="toggled">Why Finagle?</a></li>
+        
+            <li class="leaf"><a href="/docs/example.html" >Production Ready Example</a></li>
+        
+        <!-- API documentation -->
+        
+        <li class="index-entities section">
+            <a onclick="toggleSection(this);">API</a>
+            <ul>
+            
+                <li class="index-entity entity-package section">
+                    <a class="package-toggle" onclick="toggleSection(this);">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a class="entity-name" href="/api/org/http4s/index.html">
+                        org.http4s
+                    </a>
+                    <ul class="package-entities">
+                        
+                    </ul>
+                </li>
+            
+                <li class="index-entity entity-package section">
+                    <a class="package-toggle" onclick="toggleSection(this);">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a class="entity-name" href="/api/org/http4s/finagle/index.html">
+                        org.http4s.finagle
+                    </a>
+                    <ul class="package-entities">
+                        
+                            
+
+                            <li class="">
+                                <div class="entity-kinds">
+                                    
+                                    <a class="letter-anchor object" href="/api/org/http4s/finagle/Finagle$.html">O</a>
+                                </div>
+                                <a class="entity-name" href="/api/org/http4s/finagle/Finagle$.html">Finagle</a>
+                            </li>
+                            
+
+                        
+                    </ul>
+                </li>
+            
+            </ul>
+        </li>
+        
+    </ul>
+</nav>
+
+<div id="content-wrapper">
+    <main class="container">
+    <header>
+        <h1>Why Finagle x Http4s?</h1>
+        <div class="byline">
+            <a href="/edit/master//Users/jichao.ouyang/Develop/http4s-finagle/docs/finagle.md">
+                <i class="far fa-edit"></i>
+                Edit this page on GitHub
+            </a>
+        </div>
+    </header>
+    <p>Finagle is an extensible RPC system that Twitter running on, there are bunch of
+production ready things to use, without needing particular setup, batteries included such as:</p>
+<h2><a href="#zipkin-distributed-tracing" id="zipkin-distributed-tracing" class="anchor"></a>Zipkin distributed tracing</h2>
+<p>So if all your microservices are running on Finagle, it is pretty much 0 config to get Zipkin
+just works.
+<img src="https://zipkin.io/public/img/web-screenshot.png" alt="" />
+you can query a request's journey through all your microservices by just query it's trace id,
+interesting data will be summarized for you, such as the percentage of time spent in which service, and whether or not operations failed.</p>
+<h2><a href="#metrics" id="metrics" class="anchor"></a>Metrics</h2>
+<p>Finagle will automatically generate <a href="https://twitter.github.io/finagle/guide/Metrics.html">metrics</a> for server and client when you enable them with</p>
+<pre><code class="scala">.withHttpStats
+</code></pre>
+<p>There are some adapter ready to use to expose to different format, such as <a href="https://samstarling.co.uk/projects/finagle-prometheus/">Prometheus</a></p>
+<h2><a href="#circuit-breaker-x-load-balancer-x-retry" id="circuit-breaker-x-load-balancer-x-retry" class="anchor"></a>Circuit Breaker x Load Balancer x Retry</h2>
+<ul>
+<li><a href="https://twitter.github.io/finagle/guide/Clients.html#circuit-breaking">Circuit Breaker</a></li>
+<li><a href="https://twitter.github.io/finagle/guide/ApertureLoadBalancers.html">Load Balancer</a></li>
+<li><a href="https://twitter.github.io/finagle/guide/Clients.html#retries">Retry</a>
+Since Finagle is RPC system, it is very easy to detect error accurately, you can also apply <a href="https://twitter.github.io/finagle/guide/Clients.html#custom-classifiers">custom
+classifier</a> to identity different kinds of error</li>
+</ul>
+<h2><a href="#twitter-server" id="twitter-server" class="anchor"></a>Twitter Server</h2>
+<p>If we run Finagle Service on a <a href="https://twitter.github.io/twitter-server/">Twitter Server</a>, then we will get</p>
+<ul>
+<li>Logging with dynamo log level control</li>
+<li>flag and feature toggle</li>
+<li>a Admin portal that can monitor metrics and histograms</li>
+</ul>
+<h2><a href="#finagle-x-http4s" id="finagle-x-http4s" class="anchor"></a>Finagle x Http4s</h2>
+<p>The pain point is when there are lot of existing Finagle RPC services running on production already, and
+when I introduced Http4s service, I need to spend too many time to make Zipkin, metrics, circuit breaker work the
+same way with the existing services, but if I give up new service will be couple with Finagle/Finatra dsl forever.</p>
+<p>Now with http4s-finagle, we can actually take advantage of both, create business with Http4s, and run them on Finagle to keep Devops practice consistent.</p>
+
+</main>
+</div>
+<script>
+  ((window.gitter = {}).chat = {}).options = {
+    room: 'lampepfl/dotty'
+  };
+</script>
+<script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+
+        <script src="/js/highlight.pack.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+        
+            <script src="/js/toolbar.js"></script>
+        
+            <script src="/js/sidebar.js"></script>
+        
+        <script src="/js/dottydoc.js"></script>
+    </body>
+</html>
