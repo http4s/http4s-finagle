@@ -11,7 +11,7 @@ $(document).ready(function() {
     if (evt.which == 13) {
       const baseUrl = $("#baseurl-input").val();
       window.location = (
-        baseUrl + "/http4s-finagle/api/search.html?" +
+        baseUrl + "/api/search.html?" +
         "searchTerm=" + searchInput.val() +
         "&previousUrl=" + encodeURI(window.location)
       );
