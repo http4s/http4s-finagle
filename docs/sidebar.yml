@@ -1,0 +1,9 @@
+sidebar:
+  - title: Installation
+    url: docs/install.html
+  - title: Quick Start
+    url: docs/quick-start.html
+  - title: Why Finagle?
+    url: docs/finagle.html
+  - title: Production Ready Example
+    url: docs/example.html

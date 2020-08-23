@@ -49,3 +49,11 @@ lazy val root = (project in file("."))
     ),
     testFrameworks += new TestFramework("munit.Framework"),
   )
+
+Compile / doc / scalacOptions ++= Seq(
+  "-siteroot", "docs",
+  "-project", "Http4s Finagle",
+  "-project-version", s"$Http4sVersion-$FinagleVersion",
+  "-project-url", "https://github.com/http4s/http4s-finagle",
+  "-Yerased-terms",
+)
