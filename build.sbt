@@ -2,7 +2,7 @@ import Dependencies._
 
 val scala213 = "2.13.1"
 val scala212 = "2.12.10"
-val dotty = "0.24.0-RC1"
+val dotty = "0.25.0"
 
 val supportedScalaVersions = List(scala213,scala212,dotty)
 
@@ -48,12 +48,14 @@ lazy val root = (project in file("."))
       "org.scalameta" %% "munit-scalacheck" % "0.7.9" % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
+    Compile / doc / scalacOptions ++= (scalaVersion.value match {
+      case version if version == dotty =>  Seq(
+      "-siteroot", "docs",
+      "-project", "Http4s Finagle",
+      "-project-version", s"$Http4sVersion-$FinagleVersion",
+      "-project-url", "https://github.com/http4s/http4s-finagle",
+      "-Yerased-terms",
+      )
+      case _ => Seq()
+    })
   )
-
-Compile / doc / scalacOptions ++= Seq(
-  "-siteroot", "docs",
-  "-project", "Http4s Finagle",
-  "-project-version", s"$Http4sVersion-$FinagleVersion",
-  "-project-url", "https://github.com/http4s/http4s-finagle",
-  "-Yerased-terms",
-)
