@@ -81,7 +81,7 @@ object Finagle {
 
     req.headers.foreach {
       case Header(field, value) =>
-        request.headerMap.add(field.value, value)
+        request.headerMap.add(field.toString, value)
     }
 
     if (req.isChunked) {

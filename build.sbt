@@ -49,7 +49,7 @@ lazy val root = (project in file("."))
     ),
     testFrameworks += new TestFramework("munit.Framework"),
     Compile / doc / scalacOptions ++= (scalaVersion.value match {
-      case version if version == dotty =>  Seq(
+      case version if List(dotty24,dotty25).contains(version) =>  Seq(
       "-siteroot", "docs",
       "-project", "Http4s Finagle",
       "-project-version", s"$Http4sVersion-$FinagleVersion",
