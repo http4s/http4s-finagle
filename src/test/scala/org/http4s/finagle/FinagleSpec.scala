@@ -16,6 +16,7 @@ import cats.effect._
 import scala.concurrent.duration._
 import fs2._
 import org.scalacheck.Prop._
+import com.twitter.finagle.http.RequestBuilder
 
 class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   implicit val context: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
@@ -47,7 +48,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     client._2.unsafeRunSync()
     ()
   }
-  val localhost = unsafeFromString("http://localhost:8080")
+  val localhost = uri"http://localhost:8080"
 
   test("GET") {
     val reqs = List(localhost / "simple", localhost / "delayed", localhost / "no-content")
@@ -142,5 +143,22 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
         )
       }
     }
+  }
+
+  test("should convert Http4s auth Request to Finagle Request") {
+    val http4sReq = GET(uri"https://username@test.url.com/path1/path2").unsafeRunSync()
+    val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
+    val expectedFinagleReq = RequestBuilder().url("https://username@test.url.com/path1/path2").buildGet()
+    assertEquals(finagleReq.headerMap, expectedFinagleReq.headerMap)
+    assertEquals(finagleReq.host, expectedFinagleReq.host)
+  }
+
+  test("should convert Http4s Request with password and query value to Finagle Request") {
+    val http4sReq = GET(uri"https://username:password@test.url.com/path1/path2?queryName=value").unsafeRunSync()
+    val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
+    val expectedFinagleReq = RequestBuilder().url("https://username:password@test.url.com/path1/path2?queryName=value").buildGet()
+    assertEquals(finagleReq.headerMap, expectedFinagleReq.headerMap)
+    assertEquals(finagleReq.host, expectedFinagleReq.host)
+    assertEquals(finagleReq.params, expectedFinagleReq.params)
   }
 }
