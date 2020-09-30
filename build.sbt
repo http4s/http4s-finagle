@@ -49,7 +49,7 @@ lazy val root = (project in file("."))
     ),
     testFrameworks += new TestFramework("munit.Framework"),
     Compile / scalacOptions ++= (scalaVersion.value match {
-      case version if version != dotty =>  Seq(
+      case version if version == scala213 =>  Seq(
         "-Ywarn-unused:imports",
         "-Ywarn-unused:implicits",
         "-Ywarn-unused:privates",
