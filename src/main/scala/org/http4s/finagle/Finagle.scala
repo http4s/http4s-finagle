@@ -31,10 +31,7 @@ object Finagle {
         F.delay(())
       }
   def mkService[F[_]: Functor: ConcurrentEffect](route: HttpApp[F]): Service[Req, Resp] =
-    new Service[Req, Resp] {
-      def apply(req: Req) =
-        toFuture(route.local(toHttp4sReq[F]).flatMapF(fromHttp4sResponse[F]).run(req))
-    }
+    (req: Req) => toFuture(route.local(toHttp4sReq[F]).flatMapF(fromHttp4sResponse[F]).run(req))
 
   private def allocate[F[_]](svc: Service[Req, Resp])(
       implicit F: ConcurrentEffect[F]): F[Client[F]] =
@@ -59,7 +56,7 @@ object Finagle {
   }
 
   def fromHttp4sResponse[F[_]: Concurrent](resp: Response[F]): F[Resp] = {
-    import com.twitter.finagle.http.{Status}
+    import com.twitter.finagle.http.Status
     val status = Status(resp.status.code)
     val headers = resp.headers.toList.map(h => (h.name.show, h.value))
     val finagleResp = Resp(status)
@@ -110,7 +107,7 @@ object Finagle {
   private def streamBody[F[_]: Async](
       body: Stream[F, Byte],
       writer: Writer[Buf]): Stream[F, Unit] = {
-    import com.twitter.finagle.http.{Chunk}
+    import com.twitter.finagle.http.Chunk
     (body.chunks.map(a => Chunk.fromByteArray(a.toArray).content).evalMap { a =>
       toF(writer.write(a))
     }) ++ Stream.eval { toF(writer.close()) }

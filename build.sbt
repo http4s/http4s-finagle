@@ -48,6 +48,16 @@ lazy val root = (project in file("."))
       "org.scalameta" %% "munit-scalacheck" % "0.7.9" % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
+    Compile / scalacOptions ++= (scalaVersion.value match {
+      case version if version != dotty =>  Seq(
+        "-Ywarn-unused:imports",
+        "-Ywarn-unused:implicits",
+        "-Ywarn-unused:privates",
+        "-Xfatal-warnings",
+        "-deprecation",
+      )
+      case _ => Seq()
+    }),
     Compile / doc / scalacOptions ++= (scalaVersion.value match {
       case version if version == dotty =>  Seq(
       "-siteroot", "docs",

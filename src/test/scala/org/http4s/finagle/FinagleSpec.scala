@@ -4,11 +4,9 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
 import org.http4s.multipart._
 import org.http4s._
-import Uri._
 import org.http4s.dsl.io._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
-import munit._
 import cats.implicits._
 import scala.concurrent.ExecutionContext
 import client._
