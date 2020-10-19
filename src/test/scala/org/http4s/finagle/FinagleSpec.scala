@@ -23,7 +23,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     case req @ _ -> Root / "echo" => Ok(req.as[String])
     case GET -> Root / "simple" => Ok("simple path")
     case req @ POST -> Root / "chunked" => Response[IO](Ok)
-          .withEntity(Stream.emits(req.as[String].unsafeRunSync.toSeq.map(_.toString)).covary[IO])
+          .withEntity(Stream.emits(req.as[String].unsafeRunSync().toSeq.map(_.toString)).covary[IO])
         .pure[IO]
     case GET -> Root / "delayed" => timer.sleep(1.second) *>
       Ok("delayed path")
@@ -36,7 +36,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   var client: (Client[IO], IO[Unit]) = null
   var server: com.twitter.finagle.ListeningServer = null
   override def beforeAll(): Unit = {
-    client = Finagle.mkClient[IO]("localhost:8080").allocated[IO, Client[IO]].unsafeRunSync
+    client = Finagle.mkClient[IO]("localhost:8080").allocated[IO, Client[IO]].unsafeRunSync()
     server = com.twitter.finagle.Http.serve(":8080", service)
     ()
   }
@@ -46,7 +46,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     client._2.unsafeRunSync()
     ()
   }
-  val localhost = uri"http://localhost:8080"
+  val localhost = Uri.unsafeFromString("http://localhost:8080") // avoid macro in dotty
 
   test("GET") {
     val reqs = List(localhost / "simple", localhost / "delayed", localhost / "no-content")
@@ -132,11 +132,11 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
       )
       method match {
         case Method.HEAD => assertEquals(
-          client._1.status(req).unsafeRunSync,
+          client._1.status(req).unsafeRunSync(),
           Ok
         )
         case _ => assertEquals(
-          client._1.expect[String](req).unsafeRunSync,
+          client._1.expect[String](req).unsafeRunSync(),
           bodyUtf8
         )
       }
@@ -144,7 +144,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   }
 
   test("should convert Http4s auth Request to Finagle Request") {
-    val http4sReq = GET(uri"https://username@test.url.com/path1/path2").unsafeRunSync()
+    val http4sReq = GET(Uri.unsafeFromString("https://username@test.url.com/path1/path2")).unsafeRunSync()
     val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
     val expectedFinagleReq = RequestBuilder().url("https://username@test.url.com/path1/path2").buildGet()
     assertEquals(finagleReq.headerMap, expectedFinagleReq.headerMap)
@@ -152,7 +152,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   }
 
   test("should convert Http4s Request with password and query value to Finagle Request") {
-    val http4sReq = GET(uri"https://username:password@test.url.com/path1/path2?queryName=value").unsafeRunSync()
+    val http4sReq = GET(Uri.unsafeFromString("https://username:password@test.url.com/path1/path2?queryName=value")).unsafeRunSync()
     val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
     val expectedFinagleReq = RequestBuilder().url("https://username:password@test.url.com/path1/path2?queryName=value").buildGet()
     assertEquals(finagleReq.headerMap, expectedFinagleReq.headerMap)
