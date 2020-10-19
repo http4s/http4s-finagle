@@ -43,8 +43,8 @@ lazy val root = (project in file("."))
       "com.twitter" %% "finagle-http" % FinagleVersion,
       "org.http4s"  %% "http4s-dsl" % Http4sVersion % Test,
     ).map(_.withDottyCompat(scalaVersion.value)) ++ Seq(
-      "org.scalameta" %% "munit" % "0.7.9" % Test,
-      "org.scalameta" %% "munit-scalacheck" % "0.7.9" % Test,
+      "org.scalameta" %% "munit" % "0.7.14" % Test,
+      "org.scalameta" %% "munit-scalacheck" % "0.7.14" % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
     Compile / scalacOptions ++= (scalaVersion.value match {
