@@ -38,5 +38,5 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          echo "{owner:context.repo.owner, repo: context.repo.repo, pull_number: context.payload.pull_request.number}"
+          console.log("{owner:context.repo.owner, repo: context.repo.repo, pull_number: context.payload.pull_request.number}")
           github.pulls.merge({owner:context.repo.owner, repo: context.repo.repo, pull_number: context.payload.pull_request.number})
