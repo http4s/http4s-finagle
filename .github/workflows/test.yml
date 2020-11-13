@@ -32,13 +32,3 @@ jobs:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     - name: "2.12 Test"
       run: sbt "++ 2.12.10 test"
-  auto-merge:
-    runs-on: ubuntu-latest
-    needs:
-      - test
-    steps:
-      - name: Auto merge Scala Steward PR
-        uses: maxkomarychev/merge-pal-action@v0.5.1
-        if: github.event_name == 'pull_request' # && github.actor == 'scala-steward'
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
