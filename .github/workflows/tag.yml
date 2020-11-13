@@ -15,6 +15,6 @@ jobs:
         LOCAL_VERSION=$(dhall <<< '(./app.dhall).version')
         echo "main version is $MAIN_VERSION and current version is $LOCAL_VERSION"
         if [ $MAIN_VERSION != $LOCAL_VERSION ];then
-          git tag $LOCAL_VERSION
-          git push origin $LOCAL_VERSION
+          git tag "v$LOCAL_VERSION"
+          git push origin "v$LOCAL_VERSION"
         fi
