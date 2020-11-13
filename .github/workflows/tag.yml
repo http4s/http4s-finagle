@@ -1,0 +1,20 @@
+name: Release
+on:
+  push:
+    branches: [ auto-tag ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Dhall
+      uses: dhall-lang/setup-dhall@v4
+    - run: |
+        MAIN_VERSION=$(dhall <<< 'let a = https://raw.githubusercontent.com/http4s/http4s-finagle/master/app.dhall in a.version')
+        LOCAL_VERSION=$(dhall <<< '(./app.dhall).version')
+        echo "main version is $MAIN_VERSION and current version is $LOCAL_VERSION"
+        if [ $MAIN_VERSION != $LOCAL_VERSION ];then
+          git tag $LOCAL_VERSION
+          git push origin $LOCAL_VERSION
+        fi
