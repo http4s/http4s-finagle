@@ -30,12 +30,13 @@ inScope(Scope.GlobalScope)(
   )
 )
 
-val Http4sVersion = "0.21.9"
-val FinagleVersion = "20.10.0"
+val Http4sVersion = dhall.config.http4sVersion
+val FinagleVersion = dhall.config.finagleVersion
 
 lazy val root = (project in file("."))
   .settings(
     name := "Http4s Finagle",
+    version := dhall.config.version,
     crossScalaVersions := supportedScalaVersions,
     scalacOptions ++= Seq("-language:implicitConversions"),
     libraryDependencies ++= Seq(
