@@ -32,10 +32,3 @@ jobs:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     - name: "2.12 Test"
       run: sbt "++ 2.12.10 test"
-    - name: Auto merge Scala Steward PR
-      uses: actions/github-script@v3
-      if: github.event_name == 'pull_request' && github.actor == 'scala-steward'
-      with:
-        github-token: ${{secrets.GITHUB_TOKEN}}
-        script: |
-          github.pulls.merge({owner:context.repo.owner, repo: context.repo.repo, pull_number: context.payload.pull_request.number})
