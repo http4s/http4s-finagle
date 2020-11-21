@@ -4,7 +4,7 @@ on:
     branches: [ master ]
 
 jobs:
-  auto-tag:
+  gen-doc:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
