@@ -1,5 +1,5 @@
 #!/bin/bash
-sbt "++0.25.0;clean;doc"
+sbt "++0.26.0;clean;doc"
 egrep -rl 'html' docs/_site/api | xargs -I@ sed -i '' 's/"\/docs/"\/http4s-finagle\/docs/g' @
 egrep -rl 'html' docs/_site/api | xargs -I@ sed -i '' 's/"\/api/"\/http4s-finagle\/api/g' @
 egrep -rl 'html' docs/_site/api | xargs -I@ sed -i '' 's/"\/images/"\/http4s-finagle\/images/g' @

@@ -40,11 +40,4 @@ jobs:
         ref: gh-pages
         path: docs/_site
     - name: doc
-      run: |
-        sbt ++0.26.0 doc
-        cd docs/_site
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git add .
-        git commit -m "doc generated"
-        git push origin gh-pages
+      run: ./scripts/gen-doc
