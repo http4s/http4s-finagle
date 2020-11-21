@@ -10,11 +10,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup Dhall
       uses: dhall-lang/setup-dhall@v4
+    - name: Setup Hub
+      uses: Geertvdc/setup-hub@v1.0.0
     - run: |
-        MAIN_VERSION=$(dhall <<< 'let a = https://raw.githubusercontent.com/http4s/http4s-finagle/master/app.dhall in a.version')
-        LOCAL_VERSION=$(dhall <<< '(./app.dhall).version')
-        echo "main version is $MAIN_VERSION and current version is $LOCAL_VERSION"
-        if [ $MAIN_VERSION != $LOCAL_VERSION ];then
-          git tag "v$LOCAL_VERSION"
-          git push origin "v$LOCAL_VERSION"
+        LAST_RELEASE=$(hub release -L 1)
+        LOCAL_VERSION=$(dhall text <<< 'let a = ./app.dhall in "v${a.version}"')
+        echo "main version is $LAST_RELEASE and current version is $LOCAL_VERSION"
+        if [ $LAST_RELEASE != $LOCAL_VERSION ];then
+          hub release create -m "${LOCAL_VERSION}" -m "$(git log "${LAST_RELEASE}"..HEAD --pretty="format:- %b %s")" "${LOCAL_VERSION}"
         fi
