@@ -10,7 +10,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup Dhall
       uses: dhall-lang/setup-dhall@v4
-    - run: |
+    - env:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
         LAST_RELEASE=$(hub release -L 1)
         LOCAL_VERSION=$(dhall text <<< 'let a = ./app.dhall in "v${a.version}"')
         echo "main version is $LAST_RELEASE and current version is $LOCAL_VERSION"
