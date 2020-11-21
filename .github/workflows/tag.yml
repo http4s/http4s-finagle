@@ -10,8 +10,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup Dhall
       uses: dhall-lang/setup-dhall@v4
-    - name: Setup Hub
-      uses: Geertvdc/setup-hub@v1.0.0
     - run: |
         LAST_RELEASE=$(hub release -L 1)
         LOCAL_VERSION=$(dhall text <<< 'let a = ./app.dhall in "v${a.version}"')
