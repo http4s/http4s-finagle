@@ -1,14 +1,15 @@
-name: Publish
+name: Release
 on:
   push:
-    tags:
-      - v[0-9]+.*
+    branches: [ master ]
 
 jobs:
-  publish:
+  auto-tag:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Setup Dhall
+      uses: dhall-lang/setup-dhall@v4
     - name: Cache Coursier
       uses: actions/cache@v1
       with:
@@ -23,22 +24,21 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: publish
+    - env:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       GPG_SEC: ${{ secrets.GPG_SEC }}
+       GPG_PUB: ${{ secrets.GPG_PUB }}
+       PGP_PASS: ${{ secrets.PGP_PASS }}
+       SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+       SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
       run: |
-        mkdir -p .gnupg
-        echo $GPG_SEC | base64 --decode > .gnupg/secring.asc
-        echo $GPG_PUB | base64 --decode > .gnupg/pubring.asc
-        sbt +releaseEarly
-      env:
-        GPG_SEC: ${{ secrets.GPG_SEC }}
-        GPG_PUB: ${{ secrets.GPG_PUB }}
-        PGP_PASS: ${{ secrets.PGP_PASS }}
-        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-        SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
-    - name: Checkout Docs
-      uses: actions/checkout@v2
-      with:
-        ref: gh-pages
-        path: docs/_site
-    - name: doc
-      run: ./scripts/gen-doc
+        LAST_RELEASE=$(hub release -L 1)
+        LOCAL_VERSION=$(dhall text <<< 'let a = ./app.dhall in "v${a.version}"')
+        echo "main version is $LAST_RELEASE and current version is $LOCAL_VERSION"
+        if [ $LAST_RELEASE != $LOCAL_VERSION ];then
+          mkdir -p .gnupg
+          echo $GPG_SEC | base64 --decode > .gnupg/secring.asc
+          echo $GPG_PUB | base64 --decode > .gnupg/pubring.asc
+          sbt +releaseEarly
+          hub release create -m "${LOCAL_VERSION}" "${LOCAL_VERSION}"
+        fi
