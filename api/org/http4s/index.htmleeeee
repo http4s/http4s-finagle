@@ -8,24 +8,24 @@
 
         <title></title>
 
-        <link rel="icon" type="image/png" href="/http4s-finagle/images/favicon.png">
+        <link rel="icon" type="image/png" href="/images/favicon.png">
 
         <link rel="dns-prefetch" href="//fonts.googleapis.com">
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
-        <link rel="stylesheet" href="/http4s-finagle/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/http4s-finagle/css/dottydoc.css">
-        <link rel="stylesheet" href="/http4s-finagle/css/color-brewer.css"><!-- hljs theme -->
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/dottydoc.css">
+        <link rel="stylesheet" href="/css/color-brewer.css"><!-- hljs theme -->
 
         
-            <link rel="stylesheet" href="/http4s-finagle/css/toolbar.css">
+            <link rel="stylesheet" href="/css/toolbar.css">
         
-            <link rel="stylesheet" href="/http4s-finagle/css/sidebar.css">
+            <link rel="stylesheet" href="/css/sidebar.css">
         
 
-        <script src="/http4s-finagle/js/jquery.min.js"></script>
+        <script src="/js/jquery.min.js"></script>
     </head>
     <body>
         <header>
@@ -122,7 +122,7 @@
 
 <div id="content-wrapper">
     <script>
-    document.title = "Http4s Finagle Docs - org.http4s.finagle";
+    document.title = "Http4s Finagle Docs - org.http4s";
 </script>
 <main class="container api">
     <header>
@@ -134,7 +134,7 @@
             package
         </span>
         <h1>
-            org.http4s.finagle
+            org.http4s
             
         </h1>
         <span class="name-suffix">
@@ -164,20 +164,20 @@
 
                 
                 
-                <div id="Finagle$" class="member object public " data-toggle="collapse" data-target=".collapse-Finagle-">
+                <div id="org.http4s.finagle" class="member package public " data-toggle="collapse" data-target=".collapse-org-http4s-finagle">
                     <!-- Left: modifiers and kind -->
                     <span class="left-column">
                         <span class="modifiers">
                             
                         </span>
-                        <span class="member-kind">object&nbsp;</span>
+                        <span class="member-kind">package&nbsp;</span>
                     </span>
                     <!-- Right: name, type parameters, method parameters and return type -->
                     <span class="right-column">
                         <!-- Name -->
                         <h3 class="name">
                             
-                                <a href="/http4s-finagle/api/org/http4s/finagle/Finagle$.html">Finagle</a>
+                                <a href="/http4s-finagle/api/org/http4s/finagle/index.html">org.http4s.finagle</a>
                             
                         </h3>
                         <!-- Type parameters -->
@@ -190,13 +190,13 @@
                         
                     </span>
                     <!-- Shortened comment -->
-                    <div class="short collapse show collapse-Finagle-">
+                    <div class="short collapse show collapse-org-http4s-finagle">
                         
                             <p></p>
                         
                     </div>
                     <!-- Fully detailed comment -->
-                    <div class="details collapse collapse-Finagle-">
+                    <div class="details collapse collapse-org-http4s-finagle">
                         <!-- Note: the body, if there is one, is already in a paragraph. -->
                         
                         
@@ -244,13 +244,13 @@
 </script>
 <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
 
-        <script src="/http4s-finagle/js/highlight.pack.js"></script>
-        <script src="/http4s-finagle/js/bootstrap.min.js"></script>
+        <script src="/js/highlight.pack.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
         
-            <script src="/http4s-finagle/js/toolbar.js"></script>
+            <script src="/js/toolbar.js"></script>
         
-            <script src="/http4s-finagle/js/sidebar.js"></script>
+            <script src="/js/sidebar.js"></script>
         
-        <script src="/http4s-finagle/js/dottydoc.js"></script>
+        <script src="/js/dottydoc.js"></script>
     </body>
 </html>

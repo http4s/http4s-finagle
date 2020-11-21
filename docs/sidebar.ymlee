@@ -1,0 +1,5 @@
+sidebar:
+  - title: Installation
+    url: docs/install.html
+  - title: Quick Start
+    url: docs/quick-start.html

@@ -15,14 +15,14 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
-        <link rel="stylesheet" href="/http4s-finagle/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/http4s-finagle/css/dottydoc.css">
-        <link rel="stylesheet" href="/http4s-finagle/css/color-brewer.css"><!-- hljs theme -->
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/dottydoc.css">
+        <link rel="stylesheet" href="/css/color-brewer.css"><!-- hljs theme -->
 
         
-            <link rel="stylesheet" href="/http4s-finagle/css/toolbar.css">
+            <link rel="stylesheet" href="/css/toolbar.css">
         
-            <link rel="stylesheet" href="/http4s-finagle/css/sidebar.css">
+            <link rel="stylesheet" href="/css/sidebar.css">
         
 
         <script src="/http4s-finagle/js/jquery.min.js"></script>
@@ -121,7 +121,7 @@
 </nav>
 
 <div id="content-wrapper">
-    <link rel="stylesheet" href="/http4s-finagle/css/search.css">
+    <link rel="stylesheet" href="/css/search.css">
 <main class="container">
     <!-- Search terms -->
     <h1 id="searching-for"></h1>

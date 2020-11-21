@@ -8,24 +8,24 @@
 
         <title>Search</title>
 
-        <link rel="icon" type="image/png" href="/http4s-finagle/images/favicon.png">
+        <link rel="icon" type="image/png" href="/images/favicon.png">
 
         <link rel="dns-prefetch" href="//fonts.googleapis.com">
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
-        <link rel="stylesheet" href="/http4s-finagle/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/http4s-finagle/css/dottydoc.css">
-        <link rel="stylesheet" href="/http4s-finagle/css/color-brewer.css"><!-- hljs theme -->
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/dottydoc.css">
+        <link rel="stylesheet" href="/css/color-brewer.css"><!-- hljs theme -->
 
         
-            <link rel="stylesheet" href="/http4s-finagle/css/toolbar.css">
+            <link rel="stylesheet" href="/css/toolbar.css">
         
-            <link rel="stylesheet" href="/http4s-finagle/css/sidebar.css">
+            <link rel="stylesheet" href="/css/sidebar.css">
         
 
-        <script src="/http4s-finagle/js/jquery.min.js"></script>
+        <script src="/js/jquery.min.js"></script>
     </head>
     <body>
         <header>
@@ -121,7 +121,7 @@
 </nav>
 
 <div id="content-wrapper">
-    <link rel="stylesheet" href="/http4s-finagle/css/search.css">
+    <link rel="stylesheet" href="/css/search.css">
 <main class="container">
     <!-- Search terms -->
     <h1 id="searching-for"></h1>
@@ -176,7 +176,7 @@
     }
     else {
         // perform API search:
-        apiSearch = new Worker("/http4s-finagle/js/api-search.js");
+        apiSearch = new Worker("/js/api-search.js");
         apiSearch.postMessage({
             "type":   "setup",
             "search": searchTerm,
@@ -322,13 +322,13 @@
 </script>
 <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
 
-        <script src="/http4s-finagle/js/highlight.pack.js"></script>
-        <script src="/http4s-finagle/js/bootstrap.min.js"></script>
+        <script src="/js/highlight.pack.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
         
-            <script src="/http4s-finagle/js/toolbar.js"></script>
+            <script src="/js/toolbar.js"></script>
         
-            <script src="/http4s-finagle/js/sidebar.js"></script>
+            <script src="/js/sidebar.js"></script>
         
-        <script src="/http4s-finagle/js/dottydoc.js"></script>
+        <script src="/js/dottydoc.js"></script>
     </body>
 </html>
