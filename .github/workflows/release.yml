@@ -1,6 +1,8 @@
 name: Publish
 on:
-  release
+  push:
+    tags:
+      - v[0-9]+.*
 
 jobs:
   publish:
