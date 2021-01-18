@@ -1,5 +1,5 @@
 #!/bin/bash
-sbt "++0.26.0;clean;doc"
+sbt "++3.0.0-M3;clean;doc"
 grep -rl 'html' docs/_site/api | xargs -I {} sed -i 's/"\/docs/"\/http4s-finagle\/docs/g' {}
 grep -rl 'html' docs/_site/api | xargs -I{} sed -i 's/"\/api/"\/http4s-finagle\/api/g' {}
 grep -rl 'html' docs/_site/api | xargs -I{} sed -i 's/"\/images/"\/http4s-finagle\/images/g' {}
