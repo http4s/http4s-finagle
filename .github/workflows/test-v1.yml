@@ -1,0 +1,32 @@
+name: Build and Test
+on:
+  push:
+    branches: [ v1 ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/build.sbt') }}
+    - name: Cache Sbt
+      uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: "Test"
+      run: sbt "+test"
+    - name: "Test Coverage"
+      run: |
+        sbt "++ 2.13.1; coverage; test; coverageReport"
+        bash <(curl -s https://codecov.io/bash) 
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
