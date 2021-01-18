@@ -2,7 +2,7 @@ import Dependencies._
 
 val scala213 = "2.13.3"
 val scala212 = "2.12.12"
-val dotty = "0.26.0"
+val dotty = "3.0.0-M3"
 
 val supportedScalaVersions = List(scala213,scala212,dotty)
 
@@ -45,8 +45,8 @@ lazy val root = (project in file("."))
       "com.twitter" %% "finagle-http" % FinagleVersion,
       "org.http4s"  %% "http4s-dsl" % Http4sVersion % Test,
     ).map(_.withDottyCompat(scalaVersion.value)) ++ Seq(
-      "org.scalameta" %% "munit" % "0.7.14" % Test,
-      "org.scalameta" %% "munit-scalacheck" % "0.7.14" % Test,
+      "org.scalameta" %% "munit" % "0.7.20" % Test,
+      "org.scalameta" %% "munit-scalacheck" % "0.7.20" % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
     Compile / scalacOptions ++= (scalaVersion.value match {
