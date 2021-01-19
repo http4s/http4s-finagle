@@ -1,0 +1,31 @@
+<!-- This page was last generated on {{ page.date | date: "%Y-%m-%d" }} -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+        <title>{{ page.title }}</title>
+
+        <link rel="icon" type="image/png" href="{{ site.baseurl }}/images/favicon.png">
+
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+
+        {% for css in page.extraCSS %}
+            <link rel="stylesheet" href="{{ site.baseurl }}/{{ css }}">
+        {% endfor %}
+
+    </head>
+    <body>
+        {{ content }}
+
+        {% for js in page.extraJS %}
+            <script src="{{ site.baseurl }}/{{ js }}"></script>
+        {% endfor %}
+    </body>
+</html>

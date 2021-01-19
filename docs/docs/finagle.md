@@ -1,5 +1,5 @@
 ---
-layout: doc-page
+layout: main
 title: "Why Finagle x Http4s?"
 ---
 
