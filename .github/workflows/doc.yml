@@ -28,7 +28,7 @@ jobs:
         ref: gh-pages
         path: docs/_site
     - name: doc
-      run: sbt "+ 3.0.0-M3;doc"
+      run: sbt "++ 3.0.0-M3;doc"
     - name: publish
       run: |
         cd docs/_site
