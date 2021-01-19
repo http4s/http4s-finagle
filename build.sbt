@@ -62,6 +62,7 @@ lazy val root = (project in file("."))
     Compile / doc / scalacOptions ++= (scalaVersion.value match {
       case version if version == dotty =>  Seq(
       "-siteroot", "docs",
+      "-d", "docs/_site",
       "-project-version", s"$Http4sVersion-$FinagleVersion",
       "-project-url", "https://github.com/http4s/http4s-finagle",
       "-Yerased-terms",
