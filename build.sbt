@@ -1,10 +1,10 @@
 import Dependencies._
 
-val scala213 = "2.13.1"
-val scala212 = "2.12.10"
-val dotty24 = "0.24.0-RC1"
-val dotty25 = "0.25.0-RC2"
-val supportedScalaVersions = List(scala213,scala212,dotty24,dotty25)
+val scala213 = "2.13.3"
+val scala212 = "2.12.12"
+val dotty = "3.0.0-M3"
+
+val supportedScalaVersions = List(scala213,scala212,dotty)
 
 inScope(Scope.GlobalScope)(
   List(
@@ -30,12 +30,14 @@ inScope(Scope.GlobalScope)(
   )
 )
 
-val Http4sVersion = "1.0.0-M3"
-val FinagleVersion = "20.6.0"
+
+val Http4sVersion = dhall.config.http4sVersion
+val FinagleVersion = dhall.config.finagleVersion
 
 lazy val root = (project in file("."))
   .settings(
     name := "Http4s Finagle",
+    version := dhall.config.version,
     crossScalaVersions := supportedScalaVersions,
     scalacOptions ++= Seq("-language:implicitConversions"),
     libraryDependencies ++= Seq(
@@ -44,8 +46,28 @@ lazy val root = (project in file("."))
       "com.twitter" %% "finagle-http" % FinagleVersion,
       "org.http4s"  %% "http4s-dsl" % Http4sVersion % Test,
     ).map(_.withDottyCompat(scalaVersion.value)) ++ Seq(
-      "org.scalameta" %% "munit" % "0.7.9" % Test,
-      "org.scalameta" %% "munit-scalacheck" % "0.7.9" % Test,
+      "org.scalameta" %% "munit" % "0.7.21" % Test,
+      "org.scalameta" %% "munit-scalacheck" % "0.7.21" % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
+    Compile / scalacOptions ++= (scalaVersion.value match {
+      case version if version == scala213 =>  Seq(
+        "-Ywarn-unused:imports",
+        "-Ywarn-unused:implicits",
+        "-Ywarn-unused:privates",
+        "-Xfatal-warnings",
+        "-deprecation",
+      )
+      case _ => Seq()
+    }),
+    Compile / doc / scalacOptions ++= (scalaVersion.value match {
+      case version if version == dotty =>  Seq(
+      "-siteroot", "docs",
+      "-d", "docs/_site",
+      "-project-version", s"$Http4sVersion-$FinagleVersion",
+      "-project-url", "https://github.com/http4s/http4s-finagle",
+      "-Yerased-terms",
+      )
+      case _ => Seq()
+    })
   )

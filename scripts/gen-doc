@@ -1,0 +1,12 @@
+#!/bin/bash
+sbt "++3.0.0-M3;clean;doc"
+grep -rl 'html' docs/_site/api | xargs -I {} sed -i 's/"\/docs/"\/http4s-finagle\/docs/g' {}
+grep -rl 'html' docs/_site/api | xargs -I{} sed -i 's/"\/api/"\/http4s-finagle\/api/g' {}
+grep -rl 'html' docs/_site/api | xargs -I{} sed -i 's/"\/images/"\/http4s-finagle\/images/g' {}
+grep -rl 'html' docs/_site/api | xargs -I{} sed -i 's/"\/js/"\/http4s-finagle\/js/g' {}
+grep -rl 'html' docs/_site/api | xargs -I{} sed -i 's/"\/css/"\/http4s-finagle\/css/g' {}
+grep -rl 'html' docs/_site/docs | xargs -I{} sed -i 's/"\/docs/"\/http4s-finagle\/docs/g' {}
+grep -rl 'html' docs/_site/docs | xargs -I{} sed -i 's/"\/api/"\/http4s-finagle\/api/g' {}
+grep -rl 'html' docs/_site/docs | xargs -I{} sed -i 's/"\/images/"\/http4s-finagle\/images/g' {}
+grep -rl 'html' docs/_site/docs | xargs -I{} sed -i 's/"\/js/"\/http4s-finagle\/js/g' {}
+grep -rl 'html' docs/_site/docs | xargs -I{} sed -i 's/"\/css/"\/http4s-finagle\/css/g' {}

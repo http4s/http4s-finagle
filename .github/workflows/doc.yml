@@ -1,13 +1,11 @@
-name: Build and Test
+name: Generate Docs
 on:
   push:
-    branches: [ master, v1 ]
-  pull_request:
-    types: [ synchronize, opened, reopened ]
+    branches: [ master ]
+
 jobs:
-  test:
+  gen-doc:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
     - uses: actions/checkout@v2
     - name: Cache Coursier
@@ -24,11 +22,19 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: "2.13 Test"
+    - name: Checkout Docs
+      uses: actions/checkout@v2
+      with:
+        ref: gh-pages
+        path: gh-pages
+    - name: doc
+      run: sbt "++ 3.0.0-M3;doc"
+    - name: publish
       run: |
-        sbt "++ 2.13.1; coverage; test; coverageReport"
-        bash <(curl -s https://codecov.io/bash) 
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-    - name: "2.12 Test"
-      run: sbt "++ 2.12.10 test"
+        cp -r docs/_site/* gh-pages/
+        cd gh-pages
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "generated"
+        git push

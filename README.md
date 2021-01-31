@@ -5,43 +5,8 @@
 [![codecov](https://codecov.io/gh/http4s/http4s-finagle/branch/master/graph/badge.svg)](https://codecov.io/gh/http4s/http4s-finagle)\
 ![Cats Friendly Badge](https://typelevel.org/cats/img/cats-badge-tiny.png) 
 
-if your `http4s` version is `0.21.x`
-simply set `http4s-finagle` to `0.21+`
-```scala
-libraryDependencies += "org.http4s" %% "http4s-finagle" % "0.21+"
-```
+## [:book: Document](https://http4s.github.io/http4s-finagle/docs/index.html)
 
-if in any circumstance you need fix the finagle version(most cases not, finagle api is quite stable)
-```
-libraryDependencies += "org.http4s" %% "http4s-finagle" % "0.21.4-20.4.1-0"
-                                                           ^      ^      ^
-                                                      http4s   fingale   patch
-```
+## [:mag: API](https://http4s.github.io/http4s-finagle/api/org/http4s/finagle/Finagle$.html)
 
-## Server
-
-To run Http4s app on Finagle Http server, simply just use `Finagle.mkService` to adapt Http4s `HttpApp[F]` to Fingale `Service[Request, Response]`.
-
-```scala
-import org.http4s.finagle._
-
-val http4sService: HttpApp[IO] = ???
-
-val server = Http.server.serve(":8080", Finagle.mkService(http4sService))
-Await.ready(server)
-```
-
-## Client
-
-```scala
-import org.http4s.finagle._
-import com.twitter.finagle.Http
-
-val host = "blog.oyanglul.us"
-Finagle.mkClient[IO](Http.client.withTls(host).newService(s"$host:443")).use {
-  client: Client[IO] =>
-  ...
-}
-```
-
-Please refer to the [Test](src/test/scala/org/http4s/finagle/FinagleSpec.scala) which is fully functional server and client.
+## [:wrench: Test](src/test/scala/org/http4s/finagle/FinagleSpec.scala)

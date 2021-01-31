@@ -1,9 +1,7 @@
 name: Build and Test
 on:
   push:
-    branches: [ master, v1 ]
-  pull_request:
-    types: [ synchronize, opened, reopened ]
+    branches: [ v1 ]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -24,11 +22,11 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: "2.13 Test"
+    - name: "Test"
+      run: sbt "+test"
+    - name: "Test Coverage"
       run: |
         sbt "++ 2.13.1; coverage; test; coverageReport"
         bash <(curl -s https://codecov.io/bash) 
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-    - name: "2.12 Test"
-      run: sbt "++ 2.12.10 test"

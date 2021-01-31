@@ -4,11 +4,9 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
 import org.http4s.multipart._
 import org.http4s._
-import Uri._
 import org.http4s.dsl.io._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
-import munit._
 import cats.implicits._
 import scala.concurrent.ExecutionContext
 import client._
@@ -16,6 +14,7 @@ import cats.effect._
 import scala.concurrent.duration._
 import fs2._
 import org.scalacheck.Prop._
+import com.twitter.finagle.http.RequestBuilder
 
 class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   implicit val context: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
@@ -24,7 +23,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     case req @ _ -> Root / "echo" => Ok(req.as[String])
     case GET -> Root / "simple" => Ok("simple path")
     case req @ POST -> Root / "chunked" => Response[IO](Ok)
-          .withEntity(Stream.emits(req.as[String].unsafeRunSync.toSeq.map(_.toString)).covary[IO])
+          .withEntity(Stream.emits(req.as[String].unsafeRunSync().toSeq.map(_.toString)).covary[IO])
         .pure[IO]
     case GET -> Root / "delayed" => timer.sleep(1.second) *>
       Ok("delayed path")
@@ -37,7 +36,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   var client: (Client[IO], IO[Unit]) = null
   var server: com.twitter.finagle.ListeningServer = null
   override def beforeAll(): Unit = {
-    client = Finagle.mkClient[IO]("localhost:8080").allocated[IO, Client[IO]].unsafeRunSync
+    client = Finagle.mkClient[IO]("localhost:8080").allocated[IO, Client[IO]].unsafeRunSync()
     server = com.twitter.finagle.Http.serve(":8080", service)
     ()
   }
@@ -47,7 +46,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     client._2.unsafeRunSync()
     ()
   }
-  val localhost = unsafeFromString("http://localhost:8080")
+  val localhost = Uri.unsafeFromString("http://localhost:8080")
 
   test("GET") {
     val reqs = List(localhost / "simple", localhost / "delayed", localhost / "no-content")
@@ -120,25 +119,44 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     HttpVersion.`HTTP/2.0`
   )) }
 
-  // need more observation and collect failed cases
-  property("arbitrary Methods x Versions x Body".flaky) {
+  property("arbitrary Methods x Versions x Body") {
     forAll {(method: Method, body: String, version: HttpVersion) =>
+      val bodyUtf8Bytes = body.getBytes("UTF-8")
+      val bodyUtf8 = new String(bodyUtf8Bytes, "UTF-8")
+
       val req = Request[IO](
         method = method,
         uri = localhost /"echo" ,
         httpVersion = version,
-        body = Stream.emits(body.getBytes()).covary[IO]
+        body = Stream.emits(bodyUtf8Bytes).covary[IO]
       )
       method match {
         case Method.HEAD => assertEquals(
-          client._1.status(req).unsafeRunSync,
+          client._1.status(req).unsafeRunSync(),
           Ok
         )
         case _ => assertEquals(
-          client._1.expect[String](req).unsafeRunSync,
-          body
+          client._1.expect[String](req).unsafeRunSync(),
+          bodyUtf8
         )
       }
     }
+  }
+
+  test("should convert Http4s auth Request to Finagle Request") {
+    val http4sReq = GET(Uri.unsafeFromString("https://username@test.url.com/path1/path2")).unsafeRunSync()
+    val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
+    val expectedFinagleReq = RequestBuilder().url("https://username@test.url.com/path1/path2").buildGet()
+    assertEquals(finagleReq.headerMap, expectedFinagleReq.headerMap)
+    assertEquals(finagleReq.host, expectedFinagleReq.host)
+  }
+
+  test("should convert Http4s Request with password and query value to Finagle Request") {
+    val http4sReq = GET(Uri.unsafeFromString("https://username:password@test.url.com/path1/path2?queryName=value")).unsafeRunSync()
+    val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
+    val expectedFinagleReq = RequestBuilder().url("https://username:password@test.url.com/path1/path2?queryName=value").buildGet()
+    assertEquals(finagleReq.headerMap, expectedFinagleReq.headerMap)
+    assertEquals(finagleReq.host, expectedFinagleReq.host)
+    assertEquals(finagleReq.params, expectedFinagleReq.params)
   }
 }
