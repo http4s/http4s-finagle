@@ -105,7 +105,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   property("POST multipart form") {
     forAll {(name: String, value: String)=>
       val multipart = Multipart[IO](Vector(Part.formData(name, value)))
-      val req = POST(multipart, localhost / "echo").map(_.withHeaders(multipart.headers))
+      val req = POST(multipart, localhost / "echo").withHeaders(multipart.headers)
       assert(
         client._1.expect[String](req).unsafeRunSync().contains(value) == true
       )
@@ -144,7 +144,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   }
 
   test("should convert Http4s auth Request to Finagle Request") {
-    val http4sReq = GET(Uri.unsafeFromString("https://username@test.url.com/path1/path2")).unsafeRunSync()
+    val http4sReq = GET(Uri.unsafeFromString("https://username@test.url.com/path1/path2"))
     val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
     val expectedFinagleReq = RequestBuilder().url("https://username@test.url.com/path1/path2").buildGet()
     assertEquals(finagleReq.headerMap, expectedFinagleReq.headerMap)
@@ -152,7 +152,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   }
 
   test("should convert Http4s Request with password and query value to Finagle Request") {
-    val http4sReq = GET(Uri.unsafeFromString("https://username:password@test.url.com/path1/path2?queryName=value")).unsafeRunSync()
+    val http4sReq = GET(Uri.unsafeFromString("https://username:password@test.url.com/path1/path2?queryName=value"))
     val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
     val expectedFinagleReq = RequestBuilder().url("https://username:password@test.url.com/path1/path2?queryName=value").buildGet()
     assertEquals(finagleReq.headerMap, expectedFinagleReq.headerMap)
