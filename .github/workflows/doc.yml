@@ -29,7 +29,6 @@ jobs:
         path: gh-pages
     - name: doc
       run: |
-        mkdir -p docs/_site
         sbt "++ 3.0.0-M3;doc"
     - name: publish
       run: |
