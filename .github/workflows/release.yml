@@ -39,6 +39,6 @@ jobs:
           mkdir -p .gnupg
           echo $GPG_SEC | base64 --decode > .gnupg/secring.asc
           echo $GPG_PUB | base64 --decode > .gnupg/pubring.asc
-          sbt +releaseEarly sonatypeBundleRelease
+          sbt +releaseEarly
           hub release create -m "${LOCAL_VERSION}" "${LOCAL_VERSION}"
         fi
