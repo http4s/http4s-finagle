@@ -1,6 +1,6 @@
 import Dependencies._
 
-val scala213 = "2.13.3"
+val scala213 = "2.13.5"
 val scala212 = "2.12.12"
 val dotty = "3.0.0-M3"
 
