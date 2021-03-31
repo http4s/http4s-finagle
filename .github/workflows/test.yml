@@ -26,7 +26,7 @@ jobs:
         java-version: 1.8
     - name: "2.13 Test"
       run: |
-        sbt "++ 2.13; coverage; test; coverageReport"
+        sbt "++ 2.13.5; coverage; test; coverageReport"
         bash <(curl -s https://codecov.io/bash) 
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
