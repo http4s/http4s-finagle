@@ -24,9 +24,11 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: "Test"
+    - name: "2.13 Test"
       run: |
-        sbt "coverage; +test; coverageReport"
+        sbt "++ 2.13; coverage; test; coverageReport"
         bash <(curl -s https://codecov.io/bash) 
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: "Test All"
+      run: sbt "+test"
