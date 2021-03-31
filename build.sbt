@@ -4,7 +4,7 @@ val scala213 = "2.13.5"
 val scala212 = "2.12.13"
 val dotty = "3.0.0-M3"
 
-val supportedScalaVersions = List(scala213,scala212,dotty)
+val supportedScalaVersions = List(scala213,scala212)
 
 inScope(Scope.GlobalScope)(
   List(

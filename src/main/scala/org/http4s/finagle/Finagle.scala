@@ -37,7 +37,7 @@ object Finagle {
       implicit F: ConcurrentEffect[F]): F[Client[F]] =
     F.delay(Client[F] { req =>
       Resource
-        .liftF(for {
+        .eval(for {
           freq <- fromHttp4sReq(req)
           resp <- toF(svc(freq))
         } yield resp)
@@ -84,9 +84,8 @@ object Finagle {
       val auth = "Basic " + Base64StringEncoder.encode(repr.getBytes(StandardCharsets.UTF_8))
       request.headerMap.add(Fields.Authorization, auth)
     }
-    req.headers.foreach {
-      case Header(field, value) =>
-        request.headerMap.add(field.show, value)
+    req.headers.toList.foreach { h=>
+        request.headerMap.add(h.name.show, h.value)
     }
 
     if (req.isChunked) {
