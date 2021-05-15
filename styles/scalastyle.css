@@ -12,7 +12,7 @@
   --inactive-fg: #777;
   --title-fg: #00485E;
 
-  --link-sig-fd: #7c99a5;
+  --link-sig-fd: #2da0d1;
   --link-sig-hover-fd: #7c99a5;
 
   --leftbar-bg: #003048;
@@ -149,13 +149,15 @@ th {
   font-size: 12px;
 }
 
-.scala3doc_logo {
+.scaladoc_logo {
   width: 116px;
 }
 
 /* Navigation */
 #sideMenu2 {
-  overflow-y: auto;
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: scroll;
   scrollbar-width: thin;
   height: 100%;
   font-size: var(--leftbar-font-size);
@@ -181,14 +183,20 @@ th {
 #sideMenu2 div.expanded>div {
   display: block;
 }
-
 /* always show top level entry*/
 #sideMenu2>div{
   display: block;
 }
 
+#sideMenu2 span.micon {
+  height: 16px;
+  width: 16px;
+  margin-right: 8px;
+}
+
 /* 'a's in side menu represent text of entry with link */
 #sideMenu2 a {
+  display: flex;
   align-items: center;
   flex: 1;
   overflow-x: hidden;
@@ -200,17 +208,10 @@ th {
   margin-top: 1px;
   margin-bottom: 1px;
   width: 100%;
-  display: block;
-  /* This trick adds selected bachground stratching to the lef side of screen */
+  /* This trick adds selected background stretching to the left side of screen */
   margin-left: calc(0px - var(--side-width));
   padding-left: var(--side-width);
   width: calc(2 * var(--side-width));
-}
-
-#sideMenu2 a::before {
-  margin-left: -12em;
-  width: 12em;
-  background: red;
 }
 
 #sideMenu2 a.selected {
@@ -224,7 +225,7 @@ th {
 }
 
 /* spans represent a expand button */
-#sideMenu2 span {
+#sideMenu2 span.ar {
   align-items: center;
   cursor: pointer;
   position: absolute;
@@ -233,7 +234,7 @@ th {
   padding: 4px;
 }
 
-#sideMenu2 span::before {
+#sideMenu2 span.ar::before {
   content: "\e903"; /* arrow down */
   font-family: "dotty-icons" !important;
   font-size: 20px;
@@ -244,11 +245,11 @@ th {
   align-items: center;
   justify-content: center;
 }
-#sideMenu2 .expanded>span::before {
+#sideMenu2 .expanded>span.ar::before {
   content: "\e905"; /* arrow up */
 }
 
-#sideMenu2 .div:hover>span::before {
+#sideMenu2 .div:hover>span.ar::before {
   color: var(--leftbar-current-bg);
 }
 
@@ -431,8 +432,9 @@ Same solution is already used in Dokka.
 /* Footer */
 footer {
   display: flex;
+  bottom: 0px;
   align-items: center;
-  position: relative;
+  position: fixed;
   margin-top: 1rem;
   margin-left: var(--side-width);
   width: calc(100% - var(--side-width));
@@ -490,7 +492,7 @@ footer .pull-right {
 }
 
 .documentableElement .signature {
-  color: gray;
+  color: #5a5a5a;
   display: table-cell;
   white-space: pre-wrap;
 }
@@ -564,6 +566,10 @@ footer .pull-right {
   display: inline-block;
 }
 
+.documentableElement.expand .documentableBrief {
+  display: none;
+}
+
 .documentableAnchor {
   position: absolute;
   width: 24px;
@@ -571,11 +577,11 @@ footer .pull-right {
   background: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="darkgray" xmlns="http://www.w3.org/2000/svg"><path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"></path><path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"></path></svg> ');
 }
 
-.documentableBrief {
+.memberDocumentation {
   font-size: 14px;
 }
 
-.documentableBrief>p{
+.memberDocumentation>p{
   margin: .5em 0 0 0;
 }
 
@@ -610,6 +616,88 @@ footer .pull-right {
 .diagram-class {
   width: 100%;
   max-height: 400px;
+  position: relative;
+}
+
+.cover-header {
+  display: flex;
+  flex-direction: row;
+  padding-top: 1em;
+}
+
+.micon {
+  box-sizing: content-box;
+  height: 5.7em;
+  width: 5.7em;
+  color:transparent;
+}
+
+.micon.c {
+  content: url("../images/class.svg")
+}
+
+.micon.c-wc {
+  content: url("../images/class_comp.svg")
+}
+
+.micon.o {
+  content: url("../images/object.svg")
+}
+
+.micon.o-wc {
+  content: url("../images/object_comp.svg")
+}
+
+.micon.t {
+  content: url("../images/trait.svg")
+}
+
+.micon.t-wc {
+  content: url("../images/trait_comp.svg")
+}
+
+.micon.e {
+  content: url("../images/enum.svg")
+}
+
+.micon.e-wc {
+  content: url("../images/enum_comp.svg")
+}
+
+.micon.g {
+  content: url("../images/given.svg")
+}
+
+#leftColumn .socials {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+footer {
+  color: grey;
+}
+
+footer .socials {
+  margin-left: 10px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.social-icon {
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.social-icon img {
+  height: 20px;
+  width: 20px;
+}
+
+#generated-by {
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
 }
 
 /* Large Screens */
@@ -693,3 +781,6 @@ footer .pull-right {
   }
 }
 
+footer {
+  background-color: white;
+}
