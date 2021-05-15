@@ -28,8 +28,7 @@ jobs:
         ref: gh-pages
         path: gh-pages
     - name: doc
-      run: |
-        sbt "++ 3.0.0-M3!;doc"
+      run: sbt doc
     - name: publish
       run: |
         cp -r docs/_site/* gh-pages/
