@@ -2,7 +2,7 @@ import Dependencies._
 
 val scala213 = "2.13.5"
 val scala212 = "2.12.13"
-val dotty = "3.0.0-M3"
+val dotty = "3.0.0"
 
 val supportedScalaVersions = List(scala213,scala212)
 
@@ -23,10 +23,7 @@ inScope(Scope.GlobalScope)(
     pgpPublicRing := file(".") / ".gnupg" / "pubring.asc",
     pgpSecretRing := file(".") / ".gnupg" / "secring.asc",
     releaseEarlyWith := SonatypePublisher,
-    /* TODO: Everything compile in dotty, BUT runtime error
-     java.lang.NoSuchMethodError: org.http4s.dsl.io$.GET()Lorg/http4s/Method$PermitsBody;
-     */
-    scalaVersion := scala213
+    scalaVersion := dotty
   )
 )
 
@@ -44,7 +41,7 @@ lazy val root = (project in file("."))
       "org.http4s"  %% "http4s-client" % Http4sVersion,
       "com.twitter" %% "finagle-http" % FinagleVersion,
       "org.http4s"  %% "http4s-dsl" % Http4sVersion % Test,
-    ).map(_.withDottyCompat(scalaVersion.value)) ++ Seq(
+    ).map(_.cross(CrossVersion.for3Use2_13)) ++ Seq(
       "org.scalameta" %% "munit" % "0.7.26" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.26" % Test,
     ),
