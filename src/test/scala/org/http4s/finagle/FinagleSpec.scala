@@ -15,7 +15,9 @@ import scala.concurrent.duration._
 import fs2._
 import org.scalacheck.Prop._
 import com.twitter.finagle.http.RequestBuilder
+import org.http4s.util.CaseInsensitiveString
 
+object UserInputQueryParamMatcher extends QueryParamDecoderMatcher[String]("user_input")
 class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   implicit val context: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
   implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
@@ -31,6 +33,9 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     case GET -> Root / "not-found" => NotFound("not found")
     case GET -> Root / "empty-not-found"  => NotFound()
     case GET -> Root / "internal-error" => InternalServerError()
+    // https://github.com/http4s/http4s/security/advisories/GHSA-5vcm-3xc3-w7x3
+    case GET -> Root / "response-splitting" :? UserInputQueryParamMatcher(userInput) => NoContent().map(_.addCookie("userinput", userInput))
+    case GET -> Root / "response-splitting-header" :? UserInputQueryParamMatcher(userInput) => NoContent().map(_.withHeaders(Headers.of(Header("user-input",userInput))))
   }.orNotFound}
 
   var client: (Client[IO], IO[Unit]) = null
@@ -85,6 +90,30 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     assertEquals(
       client._1.status(GET(localhost / "internal-error")).unsafeRunSync(),
       Status.InternalServerError
+    )
+  }
+
+  test("response splitting cookie") {
+    val resp = client._1.run(GET(localhost / "response-splitting" +? ("user_input", "Wiley Hacker\r\nContent-Length:45\r\n\r\n")).unsafeRunSync).allocated.unsafeRunSync._1
+    assertEquals(
+      resp.status,
+      Status.InternalServerError
+    )
+    assertEquals(
+      resp.cookies,
+      List()
+    )
+  }
+
+  test("response splitting header") {
+    val resp = client._1.run(GET(localhost / "response-splitting-header" +? ("user_input", "Wiley Hacker\r\nContent-Length:45\r\n\r\n")).unsafeRunSync).allocated.unsafeRunSync._1
+    assertEquals(
+      resp.status,
+      Status.InternalServerError
+    )
+    assertEquals(
+      resp.headers.get(CaseInsensitiveString("user-input")),
+      None
     )
   }
 
