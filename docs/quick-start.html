@@ -1,4 +1,4 @@
-<html><head><meta charset="utf-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><title>Quick Started</title><link rel="shortcut icon" type="image/x-icon" href="../favicon.ico"></link><script type="text/javascript" src="../scripts/searchData.js" defer="true"></script><link rel="stylesheet" href="../styles/nord-light.css"></link><link rel="stylesheet" href="../styles/scalastyle.css"></link><link rel="stylesheet" href="../styles/dotty-icons.css"></link><link rel="stylesheet" href="../styles/diagram.css"></link><link rel="stylesheet" href="../styles/filter-bar.css"></link><link rel="stylesheet" href="../styles/search-bar.css"></link><link rel="stylesheet" href="../styles/scaladoc-searchbar.css"></link><script type="text/javascript" src="../hljs/highlight.pack.js" defer="true"></script><script type="text/javascript" src="../scripts/hljs-scala3.js" defer="true"></script><script type="text/javascript" src="../scripts/ux.js" defer="true"></script><script type="text/javascript" src="../scripts/common/component.js" defer="true"></script><script type="text/javascript" src="../scripts/common/utils.js" defer="true"></script><script type="text/javascript" src="../scripts/components/FilterBar.js" defer="true"></script><script type="text/javascript" src="../scripts/components/DocumentableList.js" defer="true"></script><script type="text/javascript" src="../scripts/components/Input.js" defer="true"></script><script type="text/javascript" src="../scripts/components/FilterGroup.js" defer="true"></script><script type="text/javascript" src="../scripts/components/Filter.js" defer="true"></script><script type="text/javascript" src="../scripts/searchbar.js" defer="true"></script><script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js" defer="true"></script><script type="text/javascript" src="https://d3js.org/d3.v6.min.js" defer="true"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/graphlib-dot@0.6.2/dist/graphlib-dot.min.js" defer="true"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.min.js" defer="true"></script><script type="text/javascript" src="../scripts/data.js" defer="true"></script><script>var pathToRoot = "../";</script></head><body><div id="container"><div id="leftColumn"><div id="logo"><span><div class="projectName">Http4s Finagle</div></span><span><div class="projectVersion">0.21.29-21.6.0</div></span><div class="socials"></div></div><div id="paneSearch"></div><nav id="sideMenu2"><div class="expanded"><a href="#" class="selected expanded">Http4s Finagle</a><span class="ar"></span><div><a href="install.html">Installation</a></div><div><a href="quick-start.html" class="selected expanded">Quick Started</a></div><div><a href="finagle.html">Why Finagle x Http4s?</a></div><div><a href="example.html">A Production Ready Example</a></div><div><a href="../api/index.html">API</a><span class="ar"></span><div><a href="../api/org/http4s/finagle.html"><span class="micon p"></span>org.http4s.finagle</a><span class="ar"></span><div><a href="../api/org/http4s/finagle/Finagle$.html"><span class="micon o"></span>Finagle</a></div></div></div></div></nav></div><div id="main"><div id="leftToggler"><span class="icon-toggler"></span></div><div id="scaladoc-searchBar"></div><main><div id="content"><div class="breadcrumbs"><a href="#">Http4s Finagle</a>/<a href="quick-start.html">Quick Started</a></div><div><!-- This page was last generated on  --><!doctype html>
+<html><head><meta charset="utf-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><title>Quick Started</title><link rel="shortcut icon" type="image/x-icon" href="../favicon.ico"></link><script type="text/javascript" src="../scripts/theme.js"></script><script type="text/javascript" src="../scripts/searchData.js" defer="true"></script><link rel="stylesheet" href="../styles/nord-light.css"></link><link rel="stylesheet" href="../styles/scalastyle.css"></link><link rel="stylesheet" href="../styles/colors.css"></link><link rel="stylesheet" href="../styles/dotty-icons.css"></link><link rel="stylesheet" href="../styles/diagram.css"></link><link rel="stylesheet" href="../styles/filter-bar.css"></link><link rel="stylesheet" href="../styles/search-bar.css"></link><link rel="stylesheet" href="../styles/scaladoc-searchbar.css"></link><script type="text/javascript" src="../hljs/highlight.pack.js" defer="true"></script><script type="text/javascript" src="../scripts/hljs-scala3.js" defer="true"></script><script type="text/javascript" src="../scripts/ux.js" defer="true"></script><script type="text/javascript" src="../scripts/common/component.js" defer="true"></script><script type="text/javascript" src="../scripts/common/utils.js" defer="true"></script><script type="text/javascript" src="../scripts/components/FilterBar.js" defer="true"></script><script type="text/javascript" src="../scripts/components/DocumentableList.js" defer="true"></script><script type="text/javascript" src="../scripts/components/Input.js" defer="true"></script><script type="text/javascript" src="../scripts/components/FilterGroup.js" defer="true"></script><script type="text/javascript" src="../scripts/components/Filter.js" defer="true"></script><script type="text/javascript" src="../scripts/searchbar.js" defer="true"></script><script type="text/javascript" src="../scripts/inkuire-worker.js" defer="true"></script><script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js" defer="true"></script><script type="text/javascript" src="https://d3js.org/d3.v6.min.js" defer="true"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/graphlib-dot@0.6.2/dist/graphlib-dot.min.js" defer="true"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.min.js" defer="true"></script><script type="text/javascript" src="https://github.com/VirtusLab/Inkuire/releases/download/1.0.0-M1/inkuire.js" defer="true"></script><script type="text/javascript" src="../scripts/data.js" defer="true"></script><script>var pathToRoot = "../";</script></head><body><div id="container"><div id="leftColumn"><div id="logo"><span><div class="projectName">Http4s Finagle</div></span><div id="version"><div class="versions-dropdown"><div onclick="dropdownHandler()" id="dropdown-button" class="dropdownbtn dropdownbtnactive"><div class="projectVersion">0.21.29-21.6.0</div></div><div id="dropdown-content" class="dropdown-content"><input type="text" placeholder="Search..." id="dropdown-input" onkeyup="filterFunction()"></input></div></div></div><div class="socials"></div></div><div id="paneSearch"></div><nav id="sideMenu2"><div class="expanded"><a href="index.html" class="expanded"><span>Http4s Finagle</span></a><div><a href="install.html" class=""><span>Installation</span></a></div><div><a href="quick-start.html" class="selected"><span>Quick Started</span></a></div><div><a href="finagle.html" class=""><span>Why Finagle x Http4s?</span></a></div><div><a href="example.html" class=""><span>A Production Ready Example</span></a></div><div><a href="../api/index.html" class=""><span>API</span></a><span class="ar"></span><div><a href="../api/org/http4s/finagle.html" class=""><span class="micon pa"></span><span>org.http4s.finagle</span></a><span class="ar"></span><div><a href="../api/org/http4s/finagle/Finagle$.html" class=""><span class="micon ob"></span><span>Finagle</span></a></div></div></div></div></nav></div><div id="main"><div id="leftToggler"><span class="icon-toggler"></span></div><div id="scaladoc-searchBar"></div><main><div id="content"><div class="breadcrumbs"><a href="index.html">Http4s Finagle</a>/<a href="quick-start.html">Quick Started</a></div><div><!-- This page was last generated on  --><!doctype html>
 <html lang="en"> 
  <head> 
   <meta charset="utf-8"> 
@@ -18,38 +18,44 @@
    </header> 
    <h2><a href="#server" id="server" class="anchor"></a>Server</h2> 
    <p>To run Http4s app on Finagle Http server, simply just use <code>Finagle.mkService</code> to adapt Http4s <code>HttpApp[F]</code> to Fingale <code>Service[Request, Response]</code>.</p> 
-   <pre><code class="language-scala">import org.http4s.finagle._
-import com.twitter.finagle.Http
-
-val http4sService: HttpApp[IO] = HttpRoutes.of[IO] {...}.orNotFound
-
-val server = Http.server.serve(":8080", Finagle.mkService(http4sService))
-Await.ready(server)
-</code></pre> 
+   <div class="snippet">
+    <pre><code class="language-scala"><span id="0" class="">import org.http4s.finagle._
+</span><span id="1" class="">import com.twitter.finagle.Http
+</span><span id="2" class="">
+</span><span id="3" class="">val http4sService: HttpApp[IO] = HttpRoutes.of[IO] {...}.orNotFound
+</span><span id="4" class="">
+</span><span id="5" class="">val server = Http.server.serve(":8080", Finagle.mkService(http4sService))
+</span><span id="6" class="">Await.ready(server)
+</span><pre></pre></code></pre>
+   </div> 
    <h2><a href="#client" id="client" class="anchor"></a>Client</h2> 
    <p>To make a Finagle Client is the other way around, we need to adapt Finagle <code>Service[Request, Response]</code> to Http4s <code>Client[IO]</code>:</p> 
-   <pre><code class="language-scala">import org.http4s.finagle._
-import com.twitter.finagle.Http
-
-val host = "blog.oyanglul.us"
-Finagle.mkClient[IO](Http.client.withTls(host).newService(s"$host:443")).use {
-  client: Client[IO] =&gt;
-  ...
-}
-</code></pre> 
+   <div class="snippet">
+    <pre><code class="language-scala"><span id="0" class="">import org.http4s.finagle._
+</span><span id="1" class="">import com.twitter.finagle.Http
+</span><span id="2" class="">
+</span><span id="3" class="">val host = "blog.oyanglul.us"
+</span><span id="4" class="">Finagle.mkClient[IO](Http.client.withTls(host).newService(s"$host:443")).use {
+</span><span id="5" class="">  client: Client[IO] =&gt;
+</span><span id="6" class="">  ...
+</span><span id="7" class="">}
+</span><pre></pre></code></pre>
+   </div> 
    <h3><a href="#" class="anchor"></a><img src="https://github.global.ssl.fastly.net/images/icons/emoji/warning.png" alt="emoji places:warning" height="20" width="20" align="absmiddle"></h3> 
    <p>A fundamental different from usual Http client is that finagle <code>Client[IO]</code> is actually a RPC Http client, which means it cannot send arbitrary request to any host, the host endpoint is already set when created this client. This machinism is very useful to identify endpoint healthy, load balancer, circuit breaker. But a little bit weird when using:</p> 
-   <pre><code class="language-scala">val host = "blog.oyanglul.us"
-Finagle.mkClient[IO](Http.client.withTls(host).newService(s"$host:443")).use {
-  client: Client[IO] =&gt;
-  client.status(uri"https://twiter.com")
-  client.status(uri"https://abc.com/blahblah")
-}
-</code></pre> 
+   <div class="snippet">
+    <pre><code class="language-scala"><span id="0" class="">val host = "blog.oyanglul.us"
+</span><span id="1" class="">Finagle.mkClient[IO](Http.client.withTls(host).newService(s"$host:443")).use {
+</span><span id="2" class="">  client: Client[IO] =&gt;
+</span><span id="3" class="">  client.status(uri"https:<span class="hideable">//twiter.com")</span>
+</span><span id="4" class="">  client.status(uri"https:<span class="hideable">//abc.com/blahblah")</span>
+</span><span id="5" class="">}
+</span><pre></pre></code></pre>
+   </div> 
    <ul> 
     <li><code>client.status(uri"https://twiter.com")</code> will still send request to <code>https://blog.oyanglul.us</code></li> 
     <li><code>client.status(uri"https://abc.com/blahblah")</code> will send request to <code>https://blog.oyanglul.us/blahblah</code></li> 
    </ul> 
   </main>  
  </body>
-</html></div></div></main><footer><span class="go-to-top-icon"><a href="#container"><span class="icon-vertical_align_top"></span>&nbsp;Back to top</a></span><div class="socials"></div><div id="generated-by">Generated by&nbsp;<a href="https://github.com/lampepfl/dotty/tree/master/scaladoc"><img src="../images/scaladoc_logo.svg" alt="scaladoc" class="scaladoc_logo"></img></a></div></footer></div></div></body></html>
+</html></div></div></main><footer><div id="generated-by"><span class="footer-text">Generated by</span><a href="https://github.com/lampepfl/dotty/tree/master/scaladoc"><img src="../images/scaladoc_logo.svg" alt="scaladoc" class="scaladoc_logo"></img><img src="../images/scaladoc_logo_dark.svg" alt="scaladoc" class="scaladoc_logo_dark"></img></a></div><div class="socials"><span class="footer-text"></span></div><div class="mode"><span class="footer-text">Mode</span><label id="theme-toggle" class="switch"><input type="checkbox"></input><span class="slider"></span></label></div><span class="go-to-top-icon"><a href="#container"><span class="icon-vertical_align_top"></span><span class="footer-text">Back to top</span></a></span></footer></div></div></body></html>
