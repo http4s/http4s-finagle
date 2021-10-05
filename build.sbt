@@ -2,7 +2,7 @@ import Dependencies._
 
 val scala213 = "2.13.6"
 val scala212 = "2.12.15"
-val dotty = "3.0.0"
+val dotty = "3.0.2"
 
 val supportedScalaVersions = List(scala213,scala212,dotty)
 
