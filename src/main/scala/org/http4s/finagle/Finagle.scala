@@ -18,7 +18,6 @@ import com.twitter.finagle.http.Fields
 import com.twitter.util.Base64StringEncoder
 import java.nio.charset.StandardCharsets
 import org.http4s.{Header => H4Header, Method => H4Method}
-import org.typelevel.ci._
 
 object Finagle {
 
@@ -48,7 +47,7 @@ object Finagle {
   def toHttp4sReq[F[_]](req: Req): Request[F] = {
     val method = H4Method.fromString(req.method.name).getOrElse(H4Method.GET)
     val uri = Uri.unsafeFromString(req.uri)
-    val headers = Headers(req.headerMap.toList.map { case (name, value) => Header.Raw(CIString(name), value) })
+    val headers = Headers(req.headerMap.toList.map { case (name, value) => H4Header(name, value) })
     val body = toStream[F](req.content)
     val version = HttpVersion
       .fromVersion(req.version.major, req.version.minor)
@@ -119,7 +118,7 @@ object Finagle {
   def toHttp4sResp[F[_]](resp: Resp): Response[F] =
     Response[F](
       status = Status(resp.status.code)
-    ).withHeaders(Headers(resp.headerMap.toList.map { case (name, value) => Header.Raw(CIString(name), value) }))
+    ).withHeaders(Headers(resp.headerMap.toList.map { case (name, value) => Header(name, value) }))
       .withEntity(toStream[F](resp.content))
 
   private def toF[F[_], A](f: Future[A])(implicit F: Async[F]): F[A] = F.async { cb =>
