@@ -116,11 +116,16 @@ object Finagle {
   private def toStream[F[_]](buf: Buf): Stream[F, Byte] =
     Stream.chunk[F, Byte](Chunk.array(Buf.ByteArray.Owned.extract(buf)))
 
-  private def toHttp4sResp[F[_]](resp: Resp): Response[F] =
-    Response[F](
-      status = Status.fromInt(resp.status.code).getOrElse(Status.InternalServerError)
-    ).withHeaders(Headers(resp.headerMap.toList.map { case (name, value) => Header.Raw(CIString(name), value) }))
-      .withEntity(toStream[F](resp.content))
+  private def toHttp4sResp[F[_]](resp: Resp): Response[F] = {
+    Status.fromInt(resp.status.code) match {
+      case Right(status) =>
+        Response[F](
+          status
+        ).withHeaders(Headers(resp.headerMap.toList.map { case (name, value) => Header.Raw(CIString(name), value) }))
+          .withEntity(toStream[F](resp.content))
+      case Left(parseFailure) => parseFailure.toHttpResponse(HttpVersion(resp.version.major, resp.version.minor))
+    }
+  }
 
   private def toF[F[_], A](f: Future[A])(implicit F: Async[F]): F[A] = F.async { cb =>
     f.respond {
