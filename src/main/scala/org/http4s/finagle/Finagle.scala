@@ -17,7 +17,8 @@ import cats.syntax.apply._
 import com.twitter.finagle.http.Fields
 import com.twitter.util.Base64StringEncoder
 import java.nio.charset.StandardCharsets
-import org.http4s.{Header => H4Header, Method => H4Method}
+import org.http4s.{Method => H4Method}
+import org.typelevel.ci._
 
 object Finagle {
 
@@ -44,10 +45,10 @@ object Finagle {
         .map(toHttp4sResp)
     })
 
-  def toHttp4sReq[F[_]](req: Req): Request[F] = {
+  private def toHttp4sReq[F[_]](req: Req): Request[F] = {
     val method = H4Method.fromString(req.method.name).getOrElse(H4Method.GET)
     val uri = Uri.unsafeFromString(req.uri)
-    val headers = Headers(req.headerMap.toList.map { case (name, value) => H4Header(name, value) })
+    val headers = Headers(req.headerMap.toList.map { case (name, value) => Header.Raw(CIString(name), value) })
     val body = toStream[F](req.content)
     val version = HttpVersion
       .fromVersion(req.version.major, req.version.minor)
@@ -55,10 +56,10 @@ object Finagle {
     Request(method, uri, version, headers, body)
   }
 
-  def fromHttp4sResponse[F[_]: Concurrent](resp: Response[F]): F[Resp] = {
+  private def fromHttp4sResponse[F[_]: Concurrent](resp: Response[F]): F[Resp] = {
     import com.twitter.finagle.http.Status
     val status = Status(resp.status.code)
-    val headers = resp.headers.toList.map(h => (h.name.show, h.value))
+    val headers = resp.headers.headers.map(h => (h.name.show, h.value))
     val finagleResp = Resp(status)
     headers.foreach{case (k, v) => finagleResp.headerMap.add(k,v)}
     val writeBody = if (resp.isChunked) {
@@ -84,7 +85,7 @@ object Finagle {
       val auth = "Basic " + Base64StringEncoder.encode(repr.getBytes(StandardCharsets.UTF_8))
       request.headerMap.add(Fields.Authorization, auth)
     }
-    req.headers.toList.foreach { h=>
+    req.headers.headers.foreach { h=>
         request.headerMap.add(h.name.show, h.value)
     }
 
@@ -107,19 +108,24 @@ object Finagle {
       body: Stream[F, Byte],
       writer: Writer[Buf]): Stream[F, Unit] = {
     import com.twitter.finagle.http.Chunk
-    (body.chunks.map(a => Chunk.fromByteArray(a.toArray).content).evalMap { a =>
+    body.chunks.map(a => Chunk.fromByteArray(a.toArray).content).evalMap { a =>
       toF(writer.write(a))
-    }) ++ Stream.eval { toF(writer.close()) }
+    } ++ Stream.eval { toF(writer.close()) }
   }
 
   private def toStream[F[_]](buf: Buf): Stream[F, Byte] =
     Stream.chunk[F, Byte](Chunk.array(Buf.ByteArray.Owned.extract(buf)))
 
-  def toHttp4sResp[F[_]](resp: Resp): Response[F] =
-    Response[F](
-      status = Status(resp.status.code)
-    ).withHeaders(Headers(resp.headerMap.toList.map { case (name, value) => Header(name, value) }))
-      .withEntity(toStream[F](resp.content))
+  private def toHttp4sResp[F[_]](resp: Resp): Response[F] = {
+    Status.fromInt(resp.status.code) match {
+      case Right(status) =>
+        Response[F](
+          status
+        ).withHeaders(Headers(resp.headerMap.toList.map { case (name, value) => Header.Raw(CIString(name), value) }))
+          .withEntity(toStream[F](resp.content))
+      case Left(parseFailure) => parseFailure.toHttpResponse(HttpVersion(resp.version.major, resp.version.minor))
+    }
+  }
 
   private def toF[F[_], A](f: Future[A])(implicit F: Async[F]): F[A] = F.async { cb =>
     f.respond {
