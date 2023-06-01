@@ -38,6 +38,7 @@ jobs:
           mkdir -p .gnupg
           echo $GPG_SEC | base64 -di | gpg --import
           gpg -a --export-secret-keys > .gnupg/secring.asc
+          gpg -a --export > .gnupg/pubring.asc
           sbt +releaseEarly
           hub release create -m "${LOCAL_VERSION}" "${LOCAL_VERSION}"
         fi
