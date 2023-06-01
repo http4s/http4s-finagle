@@ -36,9 +36,12 @@ jobs:
         echo "main version is $LAST_RELEASE and current version is $LOCAL_VERSION"
         if [ $LAST_RELEASE != $LOCAL_VERSION ];then
           mkdir -p .gnupg
-          echo $GPG_SEC | base64 -di | gpg --import
-          gpg -a --export-secret-keys > .gnupg/secring.asc
-          gpg -a --export > .gnupg/pubring.asc
+          echo "$GPG_SEC" | base64 -di > /tmp/signing-key.gpg
+          echo "$PGP_PASS" | gpg --pinentry-mode loopback --passphrase-fd 0 --import /tmp/signing-key.gpg
+          echo "$PGP_PASS" | gpg --pinentry-mode loopback --passphrase-fd 0 -a --export-secret-keys > .gnupg/secring.asc
+          gpg --pinentry-mode loopback -a --export > .gnupg/pubring.asc
+          wc .gnupg/secring.asc
+          wc .gnupg/pubring.asc
           sbt +releaseEarly
           hub release create -m "${LOCAL_VERSION}" "${LOCAL_VERSION}"
         fi
