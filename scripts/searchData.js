@@ -7,10 +7,7 @@ pages = [{"l":"docs/index.html","n":"Http4s Finagle","t":"Http4s Finagle","d":""
 {"l":"api/org/http4s/finagle.html","n":"org.http4s.finagle","t":"package org.http4s.finagle","d":"org/http4s/finagle","k":"package"},
 {"l":"api/org/http4s/finagle/Finagle$.html","n":"Finagle","t":"object Finagle","d":"org/http4s/finagle/Finagle$","k":"object"},
 {"l":"api/org/http4s/finagle/Finagle$.html","n":"fromHttp4sReq","t":"def fromHttp4sReq[F[_]](req: Request[F])(implicit F: Concurrent[F]): F[Request]","d":"org/http4s/finagle/Finagle$","k":"def"},
-{"l":"api/org/http4s/finagle/Finagle$.html","n":"fromHttp4sResponse","t":"def fromHttp4sResponse[F[_]](resp: Response[F])(implicit evidence$3: Concurrent[F]): F[Response]","d":"org/http4s/finagle/Finagle$","k":"def"},
 {"l":"api/org/http4s/finagle/Finagle$.html","n":"mkClient","t":"def mkClient[F[_]](dest: String)(implicit F: ConcurrentEffect[F]): Resource[F, Client[F]]","d":"org/http4s/finagle/Finagle$","k":"def"},
 {"l":"api/org/http4s/finagle/Finagle$.html","n":"mkClient","t":"def mkClient[F[_]](svc: Service[Request, Response])(implicit F: ConcurrentEffect[F]): Resource[F, Client[F]]","d":"org/http4s/finagle/Finagle$","k":"def"},
 {"l":"api/org/http4s/finagle/Finagle$.html","n":"mkService","t":"def mkService[F[_]](route: HttpApp[F])(implicit evidence$1: Functor[F], evidence$2: ConcurrentEffect[F]): Service[Request, Response]","d":"org/http4s/finagle/Finagle$","k":"def"},
-{"l":"api/org/http4s/finagle/Finagle$.html","n":"toHttp4sReq","t":"def toHttp4sReq[F[_]](req: Request): Request[F]","d":"org/http4s/finagle/Finagle$","k":"def"},
-{"l":"api/org/http4s/finagle/Finagle$.html","n":"toHttp4sResp","t":"def toHttp4sResp[F[_]](resp: Response): Response[F]","d":"org/http4s/finagle/Finagle$","k":"def"},
 {"l":"index.html","n":"index","t":"index","d":"","k":"static"}];
