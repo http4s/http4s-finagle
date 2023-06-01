@@ -1,4 +1,4 @@
-let http4sVersion = "0.22.15"
+let http4sVersion = "0.23.19"
 
 let finagleVersion = "22.3.0"
 
