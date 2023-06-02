@@ -4,42 +4,32 @@ val scala213 = "2.13.8"
 val scala212 = "2.12.15"
 val dotty = "3.0.2"
 
+val Http4sVersion = "0.22.15"
+val FinagleVersion = "22.3.0"
 val supportedScalaVersions = List(scala213,scala212,dotty)
 
 inScope(Scope.GlobalScope)(
   List(
-    organization := "org.http4s",
     licenses := Seq("Apache License 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     homepage := Some(url("https://github.com/http4s/http4s-finagle")),
     developers := List(
       Developer("jcouyang", "Jichao Ouyang", "oyanglulu@gmail.com", url("https://github.com/jcouyang"))
     ),
-    scmInfo := Some(
-      ScmInfo(
-        url("https://github.com/http4s/http4s-finagle"),
-        "scm:git@github.com:http4s/http4s-finagle.git"
-      )
-    ),
-    pgpPublicRing := file(".") / ".gnupg" / "pubring.asc",
-    pgpSecretRing := file(".") / ".gnupg" / "secring.asc",
-    releaseEarlyWith := SonatypePublisher,
-    scalaVersion := dotty
+    scalaVersion := dotty,
+    tlBaseVersion := Http4sVersion.split("\\.").take(2).mkString(".")
   )
 )
 
-val Http4sVersion = dhall.config.http4sVersion
-val FinagleVersion = dhall.config.finagleVersion
 
 lazy val root = (project in file("."))
   .settings(
     name := "Http4s Finagle",
-    version := dhall.config.version,
     crossScalaVersions := supportedScalaVersions,
-    scalacOptions ++= Seq("-language:implicitConversions"),
     libraryDependencies ++= Seq(
       "org.http4s"  %% "http4s-core" % Http4sVersion,
       "org.http4s"  %% "http4s-client" % Http4sVersion,
       "com.twitter" %% "finagle-http" % FinagleVersion,
+      "org.typelevel" %% "case-insensitive" % "1.4.0",
       "org.http4s"  %% "http4s-dsl" % Http4sVersion % Test,
     ).map(_.cross(CrossVersion.for3Use2_13)) ++ Seq(
       "org.scalameta" %% "munit" % "0.7.29" % Test,
