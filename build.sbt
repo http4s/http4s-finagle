@@ -25,7 +25,6 @@ lazy val root = (project in file("."))
   .settings(
     name := "Http4s Finagle",
     crossScalaVersions := supportedScalaVersions,
-    scalacOptions ++= Seq("-language:implicitConversions"),
     libraryDependencies ++= Seq(
       "org.http4s"  %% "http4s-core" % Http4sVersion,
       "org.http4s"  %% "http4s-client" % Http4sVersion,
