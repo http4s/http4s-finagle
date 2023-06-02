@@ -2,6 +2,7 @@ name: Release
 on:
   push:
     branches: [ master, v1 ]
+    tags: [v*]
 
 jobs:
   auto-tag:
