@@ -1,7 +1,7 @@
 name: Build and Test
 on:
   push:
-    branches: [ master, v1, cirelease ]
+    branches: [ master, v1 ]
   pull_request:
     types: [ synchronize, opened, reopened ]
 jobs:
