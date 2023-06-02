@@ -25,23 +25,14 @@ jobs:
       with:
         java-version: 1.8
     - env:
-       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-       GPG_SEC: ${{ secrets.PGP_SECRET }}
-       PGP_PASS: ${{ secrets.PGP_PASSPHRASE }}
-       SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-       SONATYPE_USER: ${{ secrets.SONATYPE_USERNAME }}
+        PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        SONATYPE_CREDENTIAL_HOST: ${{ secrets.SONATYPE_CREDENTIAL_HOST }}
+        SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        PGP_SECRET: ${{ secrets.PGP_SECRET }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        LAST_RELEASE=$(hub release -L 1)
-        LOCAL_VERSION=$(dhall text <<< 'let a = ./app.dhall in "v${a.version}"')
-        echo "main version is $LAST_RELEASE and current version is $LOCAL_VERSION"
-        if [ $LAST_RELEASE != $LOCAL_VERSION ];then
-          mkdir -p .gnupg
-          echo "$GPG_SEC" | base64 -di > /tmp/signing-key.gpg
-          echo "$PGP_PASS" | gpg --pinentry-mode loopback --passphrase-fd 0 --import /tmp/signing-key.gpg
-          echo "$PGP_PASS" | gpg --pinentry-mode loopback --passphrase-fd 0 -a --export-secret-keys > .gnupg/secring.asc
-          gpg --pinentry-mode loopback -a --export > .gnupg/pubring.asc
-          wc .gnupg/secring.asc
-          wc .gnupg/pubring.asc
-          sbt +releaseEarly
-          hub release create -m "${LOCAL_VERSION}" "${LOCAL_VERSION}"
-        fi
+        echo "$PGP_SECRET" | base64 -di > /tmp/signing-key.gpg
+        echo "$PGP_PASSPHRASE" | gpg --pinentry-mode loopback --passphrase-fd 0 --import /tmp/signing-key.gpg
+        (echo "$PGP_PASSPHRASE"; echo; echo) | gpg --command-fd 0 --pinentry-mode loopback --change-passphrase $(gpg --list-secret-keys --with-colons 2> /dev/null | grep '^sec:' | cut --delimiter ':' --fields 5 | tail -n 1)
+        sbt tlCiRelease

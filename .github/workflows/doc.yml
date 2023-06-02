@@ -31,6 +31,7 @@ jobs:
       run: sbt doc
     - name: publish
       run: |
+        set +e
         cp -r docs/_site/* gh-pages/
         cd gh-pages
         git config user.name github-actions

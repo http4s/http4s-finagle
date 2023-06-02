@@ -4,6 +4,8 @@ val scala213 = "2.13.8"
 val scala212 = "2.12.15"
 val dotty = "3.0.2"
 
+val Http4sVersion = "0.22.15"
+val FinagleVersion = "22.3.0"
 val supportedScalaVersions = List(scala213,scala212,dotty)
 
 inScope(Scope.GlobalScope)(
@@ -20,20 +22,15 @@ inScope(Scope.GlobalScope)(
         "scm:git@github.com:http4s/http4s-finagle.git"
       )
     ),
-    pgpPublicRing := file(".") / ".gnupg" / "pubring.asc",
-    pgpSecretRing := file(".") / ".gnupg" / "secring.asc",
-    releaseEarlyWith := SonatypePublisher,
-    scalaVersion := dotty
+    scalaVersion := dotty,
+    tlBaseVersion := Http4sVersion.split("\\.").take(2).mkString(".")
   )
 )
 
-val Http4sVersion = dhall.config.http4sVersion
-val FinagleVersion = dhall.config.finagleVersion
 
 lazy val root = (project in file("."))
   .settings(
     name := "Http4s Finagle",
-    version := dhall.config.version,
     crossScalaVersions := supportedScalaVersions,
     scalacOptions ++= Seq("-language:implicitConversions"),
     libraryDependencies ++= Seq(
