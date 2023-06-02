@@ -5,17 +5,17 @@ import org.http4s.client._
 import cats.effect._
 import cats.syntax.functor._
 import com.twitter.finagle.{Http, Service}
-import com.twitter.finagle.http.{Request => Req, Response => Resp, Method, Version}
+import com.twitter.finagle.http.{Method, Version, Request => Req, Response => Resp}
 import com.twitter.util.{Future, Return, Throw}
 import com.twitter.io._
 import cats.syntax.flatMap._
 import cats.syntax.show._
 import fs2.{Chunk, Stream}
-import cats.Functor
 import com.twitter.util.Promise
 import cats.syntax.apply._
 import com.twitter.finagle.http.Fields
 import com.twitter.util.Base64StringEncoder
+
 import java.nio.charset.StandardCharsets
 import org.http4s.{Method => H4Method}
 import org.typelevel.ci._
@@ -31,7 +31,7 @@ object Finagle {
       .make(allocate(svc)) { _ =>
         F.delay(())
       }
-  def mkService[F[_]: Functor: ConcurrentEffect](route: HttpApp[F]): Service[Req, Resp] =
+  def mkService[F[_]: ConcurrentEffect](route: HttpApp[F]): Service[Req, Resp] =
     (req: Req) => toFuture(route.local(toHttp4sReq[F]).flatMapF(fromHttp4sResponse[F]).run(req))
 
   private def allocate[F[_]](svc: Service[Req, Resp])(
@@ -98,7 +98,7 @@ object Finagle {
         if(b.nonEmpty) {
           val content = Buf.ByteArray.Owned(b)
           request.content = content
-          request.contentLength = content.length
+          request.contentLength = content.length.longValue()
         }
       } *> F.delay(request)
     }

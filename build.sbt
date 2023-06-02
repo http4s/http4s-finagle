@@ -10,17 +10,10 @@ val supportedScalaVersions = List(scala213,scala212,dotty)
 
 inScope(Scope.GlobalScope)(
   List(
-    organization := "org.http4s",
     licenses := Seq("Apache License 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     homepage := Some(url("https://github.com/http4s/http4s-finagle")),
     developers := List(
       Developer("jcouyang", "Jichao Ouyang", "oyanglulu@gmail.com", url("https://github.com/jcouyang"))
-    ),
-    scmInfo := Some(
-      ScmInfo(
-        url("https://github.com/http4s/http4s-finagle"),
-        "scm:git@github.com:http4s/http4s-finagle.git"
-      )
     ),
     scalaVersion := dotty,
     tlBaseVersion := Http4sVersion.split("\\.").take(2).mkString(".")
