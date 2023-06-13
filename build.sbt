@@ -4,7 +4,7 @@ val scala213 = "2.13.8"
 val scala212 = "2.12.15"
 val dotty = "3.0.2"
 
-val Http4sVersion = "0.22.15"
+val Http4sVersion = "0.23.20"
 val FinagleVersion = "22.3.0"
 val supportedScalaVersions = List(scala213,scala212,dotty)
 
