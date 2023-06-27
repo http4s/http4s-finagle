@@ -3,6 +3,7 @@ package finagle
 
 import org.http4s.client._
 import cats.effect._
+import cats.effect.std.Dispatcher
 import cats.syntax.functor._
 import com.twitter.finagle.{Http, Service}
 import com.twitter.finagle.http.{Method, Version, Request => Req, Response => Resp}
@@ -15,28 +16,29 @@ import com.twitter.util.Promise
 import cats.syntax.apply._
 import com.twitter.finagle.http.Fields
 import com.twitter.util.Base64StringEncoder
-
 import java.nio.charset.StandardCharsets
 import org.http4s.{Method => H4Method}
 import org.typelevel.ci._
+import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext
 
 object Finagle {
 
-  def mkClient[F[_]](dest: String)(implicit F: ConcurrentEffect[F]): Resource[F, Client[F]] =
+  def mkClient[F[_]: Async](dest: String): Resource[F, Client[F]] =
     mkClient(Http.newService(dest))
 
-  def mkClient[F[_]](svc: Service[Req, Resp])(
-      implicit F: ConcurrentEffect[F]): Resource[F, Client[F]] =
+  def mkClient[F[_]: Async](svc: Service[Req, Resp]): Resource[F, Client[F]] =
     Resource
       .make(allocate(svc)) { _ =>
-        F.delay(())
+        Async[F].delay(())
       }
-  def mkService[F[_]: ConcurrentEffect](route: HttpApp[F]): Service[Req, Resp] =
-    (req: Req) => toFuture(route.local(toHttp4sReq[F]).flatMapF(fromHttp4sResponse[F]).run(req))
+  def mkService[F[_]: Async](route: HttpApp[F])(implicit ec: ExecutionContext): Resource[F, Service[Req, Resp]] =
+    Dispatcher.parallel[F] map { dispatcher =>
+      (req: Req) => toFuture(dispatcher, route.local(toHttp4sReq[F]).flatMapF(fromHttp4sResponse[F]).run(req))
+    }
 
-  private def allocate[F[_]](svc: Service[Req, Resp])(
-      implicit F: ConcurrentEffect[F]): F[Client[F]] =
-    F.delay(Client[F] { req =>
+  private def allocate[F[_]: Async](svc: Service[Req, Resp]): F[Client[F]] =
+    Async[F].delay(Client[F] { req =>
       Resource
         .eval(for {
           freq <- fromHttp4sReq(req)
@@ -56,7 +58,7 @@ object Finagle {
     Request(method, uri, version, headers, body)
   }
 
-  private def fromHttp4sResponse[F[_]: Concurrent](resp: Response[F]): F[Resp] = {
+  private def fromHttp4sResponse[F[_]: Async](resp: Response[F]): F[Resp] = {
     import com.twitter.finagle.http.Status
     val status = Status(resp.status.code)
     val headers = resp.headers.headers.map(h => (h.name.show, h.value))
@@ -75,7 +77,7 @@ object Finagle {
     writeBody.as(finagleResp)
   }
 
-  def fromHttp4sReq[F[_]](req: Request[F])(implicit F: Concurrent[F]): F[Req] = {
+  def fromHttp4sReq[F[_]: Async](req: Request[F]): F[Req] = {
     val method = Method(req.method.name)
     val version = Version(req.httpVersion.major, req.httpVersion.minor)
     val request = Req(version, method, req.uri.toString)
@@ -92,7 +94,7 @@ object Finagle {
     if (req.isChunked) {
       request.headerMap.remove(Fields.TransferEncoding)
       request.setChunked(true)
-      Concurrent[F].start(streamBody(req.body, request.writer).compile.drain) *> F.delay(request)
+      Spawn[F].start(streamBody(req.body, request.writer).compile.drain) *> Async[F].delay(request)
     } else {
       req.as[Array[Byte]].map { b =>
         if(b.nonEmpty) {
@@ -100,7 +102,7 @@ object Finagle {
           request.content = content
           request.contentLength = content.length.longValue()
         }
-      } *> F.delay(request)
+      } *> Async[F].delay(request)
     }
   }
 
@@ -127,21 +129,22 @@ object Finagle {
     }
   }
 
-  private def toF[F[_], A](f: Future[A])(implicit F: Async[F]): F[A] = F.async { cb =>
-    f.respond {
-      case Return(value) => cb(Right(value))
-      case Throw(exception) => cb(Left(exception))
-    }
-    ()
-  }
-  private def toFuture[F[_]: Effect, A](f: F[A]): Future[A] = {
-    val promise: Promise[A] = Promise()
-    Effect[F]
-      .runAsync(f) {
-        case Right(value) => IO(promise.setValue(value))
-        case Left(exception) => IO(promise.setException(exception))
+  private def toF[F[_]: Async, A](f: Future[A]): F[A] = Async[F].async_ { cb =>
+      f.respond {
+        case Return(value) =>
+          cb(Right(value))
+        case Throw(exception) =>
+          cb(Left(exception))
       }
-      .unsafeRunSync()
+      ()
+    }
+
+  private def toFuture[F[_], A](dispatcher: Dispatcher[F], f: F[A])(implicit ec: ExecutionContext): Future[A] = {
+      val promise: Promise[A] = Promise()
+      dispatcher.unsafeToFuture(f).onComplete {
+        case Success(value) => promise.setValue(value)
+        case Failure(exception) => promise.setException(exception)
+      }
     promise
   }
 }

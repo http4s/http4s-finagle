@@ -6,44 +6,45 @@ import org.http4s.multipart._
 import org.http4s._
 import org.http4s.dsl.io._
 import org.http4s.client.dsl.io._
-import org.http4s.implicits._
+import org.http4s.syntax.all._
 import cats.implicits._
-import scala.concurrent.ExecutionContext
 import client._
 import cats.effect._
+
 import scala.concurrent.duration._
 import fs2._
 import org.scalacheck.Prop._
 import com.twitter.finagle.http.RequestBuilder
+import cats.effect.unsafe.implicits.{global => runtime}
 
 class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
-  implicit val context: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-  implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
+  implicit val ec = runtime.compute
   val service = Finagle.mkService{HttpRoutes.of[IO] {
     case req @ _ -> Root / "echo" => Ok(req.as[String])
     case GET -> Root / "simple" => Ok("simple path")
     case req @ POST -> Root / "chunked" => Response[IO](Ok)
           .withEntity(Stream.emits(req.as[String].unsafeRunSync().toSeq.map(_.toString)).covary[IO])
         .pure[IO]
-    case GET -> Root / "delayed" => timer.sleep(1.second) *>
+    case GET -> Root / "delayed" => IO.sleep(1.second) *>
       Ok("delayed path")
     case GET -> Root / "no-content" => NoContent()
     case GET -> Root / "not-found" => NotFound("not found")
     case GET -> Root / "empty-not-found"  => NotFound()
     case GET -> Root / "internal-error" => InternalServerError()
-  }.orNotFound}
+  }.orNotFound}.allocated.unsafeRunSync()
 
   var client: (Client[IO], IO[Unit]) = null
   var server: com.twitter.finagle.ListeningServer = null
   override def beforeAll(): Unit = {
-    client = Finagle.mkClient[IO]("localhost:8080").allocated[IO, Client[IO]].unsafeRunSync()
-    server = com.twitter.finagle.Http.serve(":8080", service)
+    client = Finagle.mkClient[IO]("localhost:8080").allocated[Client[IO]].unsafeRunSync()
+    server = com.twitter.finagle.Http.serve(":8080", service._1)
     ()
   }
 
   override def afterAll():Unit = {
     server.close()
     client._2.unsafeRunSync()
+    service._2.unsafeRunSync()
     ()
   }
   val localhost = Uri.unsafeFromString("http://localhost:8080")
@@ -109,7 +110,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
       request = POST(multipart, localhost / "echo").withHeaders(multipart.headers)
     } yield request
       assert(
-        client._1.expect[String](req).unsafeRunSync().contains(value) == true
+        req.flatMap(r => client._1.expect[String](r)).unsafeRunSync().contains(value)
       )
     }
   }
