@@ -1,6 +1,6 @@
-let http4sVersion = "0.22.15"
+let http4sVersion = "0.23.21"
 
-let finagleVersion = "22.3.0"
+let finagleVersion = "22.12.0"
 
 in  { version = "${http4sVersion}-${finagleVersion}"
     , http4sVersion
