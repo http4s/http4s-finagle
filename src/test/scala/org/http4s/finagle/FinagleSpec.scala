@@ -17,8 +17,10 @@ import org.scalacheck.Prop._
 import com.twitter.finagle.http.RequestBuilder
 import cats.effect.unsafe.implicits.{global => runtime}
 
+import scala.concurrent.ExecutionContext
+
 class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
-  implicit val ec = runtime.compute
+  implicit val ec: ExecutionContext = runtime.compute
   val service = Finagle.mkService{HttpRoutes.of[IO] {
     case req @ _ -> Root / "echo" => Ok(req.as[String])
     case GET -> Root / "simple" => Ok("simple path")
