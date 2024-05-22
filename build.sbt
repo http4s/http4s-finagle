@@ -30,7 +30,7 @@ lazy val root = (project in file("."))
       "org.typelevel" %% "case-insensitive" % "1.4.0",
       "org.http4s"  %% "http4s-dsl" % Http4sVersion % Test,
     ).map(_.cross(CrossVersion.for3Use2_13)) ++ Seq(
-      "org.scalameta" %% "munit" % "0.7.29" % Test,
+      "org.scalameta" %% "munit" % "1.0.0" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
