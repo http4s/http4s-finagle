@@ -14,11 +14,11 @@ ThisBuild / developers := List(
 ThisBuild / scalaVersion := dotty
 ThisBuild / tlBaseVersion := Http4sVersion.split("\\.").take(2).mkString(".")
 ThisBuild / startYear := Some(2020)
+ThisBuild / crossScalaVersions := supportedScalaVersions
 
 lazy val root = (project in file("."))
   .settings(
     name := "Http4s Finagle",
-    crossScalaVersions := supportedScalaVersions,
     libraryDependencies ++= Seq(
       "org.http4s" %% "http4s-core" % Http4sVersion,
       "org.http4s" %% "http4s-client" % Http4sVersion,
