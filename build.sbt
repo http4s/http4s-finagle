@@ -13,6 +13,7 @@ ThisBuild / developers := List(
 )
 ThisBuild / scalaVersion := dotty
 ThisBuild / tlBaseVersion := Http4sVersion.split("\\.").take(2).mkString(".")
+ThisBuild / startYear := Some(2020)
 
 lazy val root = (project in file("."))
   .settings(
