@@ -19,6 +19,7 @@ package org.http4s.finagle
 import cats.effect._
 import cats.effect.unsafe.implicits.{global => runtime}
 import cats.implicits._
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.RequestBuilder
 import fs2._
 import org.http4s._
@@ -34,7 +35,6 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 import client._
-import com.twitter.finagle.Service
 
 class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   implicit val ec: ExecutionContext = runtime.compute
