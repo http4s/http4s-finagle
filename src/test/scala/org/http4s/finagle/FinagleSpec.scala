@@ -38,30 +38,32 @@ import com.twitter.finagle.Service
 
 class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   implicit val ec: ExecutionContext = runtime.compute
-  val service: (Service[com.twitter.finagle.http.Request, com.twitter.finagle.http.Response], IO[Unit]) = Finagle
-    .mkService {
-      HttpRoutes
-        .of[IO] {
-          case req @ _ -> Root / "echo" => Ok(req.as[String])
-          case GET -> Root / "simple" => Ok("simple path")
-          case req @ POST -> Root / "chunked" =>
-            Response[IO](Ok)
-              .withEntity(
-                Stream.emits(req.as[String].unsafeRunSync().toSeq.map(_.toString)).covary[IO]
-              )
-              .pure[IO]
-          case GET -> Root / "delayed" =>
-            IO.sleep(1.second) *>
-              Ok("delayed path")
-          case GET -> Root / "no-content" => NoContent()
-          case GET -> Root / "not-found" => NotFound("not found")
-          case GET -> Root / "empty-not-found" => NotFound()
-          case GET -> Root / "internal-error" => InternalServerError()
-        }
-        .orNotFound
-    }
-    .allocated
-    .unsafeRunSync()
+  val service
+      : (Service[com.twitter.finagle.http.Request, com.twitter.finagle.http.Response], IO[Unit]) =
+    Finagle
+      .mkService {
+        HttpRoutes
+          .of[IO] {
+            case req @ _ -> Root / "echo" => Ok(req.as[String])
+            case GET -> Root / "simple" => Ok("simple path")
+            case req @ POST -> Root / "chunked" =>
+              Response[IO](Ok)
+                .withEntity(
+                  Stream.emits(req.as[String].unsafeRunSync().toSeq.map(_.toString)).covary[IO]
+                )
+                .pure[IO]
+            case GET -> Root / "delayed" =>
+              IO.sleep(1.second) *>
+                Ok("delayed path")
+            case GET -> Root / "no-content" => NoContent()
+            case GET -> Root / "not-found" => NotFound("not found")
+            case GET -> Root / "empty-not-found" => NotFound()
+            case GET -> Root / "internal-error" => InternalServerError()
+          }
+          .orNotFound
+      }
+      .allocated
+      .unsafeRunSync()
 
   var client: (Client[IO], IO[Unit]) = null
   var server: com.twitter.finagle.ListeningServer = null
