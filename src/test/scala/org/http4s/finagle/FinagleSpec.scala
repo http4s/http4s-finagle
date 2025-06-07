@@ -16,28 +16,29 @@
 
 package org.http4s.finagle
 
+import cats.effect._
+import cats.effect.unsafe.implicits.{global => runtime}
+import cats.implicits._
+import com.twitter.finagle.http.RequestBuilder
+import fs2._
+import org.http4s._
+import org.http4s.client.dsl.io._
+import org.http4s.dsl.io._
+import org.http4s.multipart._
+import org.http4s.syntax.all._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
-import org.http4s.multipart._
-import org.http4s._
-import org.http4s.dsl.io._
-import org.http4s.client.dsl.io._
-import org.http4s.syntax.all._
-import cats.implicits._
-import client._
-import cats.effect._
-
-import scala.concurrent.duration._
-import fs2._
 import org.scalacheck.Prop._
-import com.twitter.finagle.http.RequestBuilder
-import cats.effect.unsafe.implicits.{global => runtime}
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
+
+import client._
+import com.twitter.finagle.Service
 
 class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   implicit val ec: ExecutionContext = runtime.compute
-  val service = Finagle
+  val service: (Service[com.twitter.finagle.http.Request, com.twitter.finagle.http.Response], IO[Unit]) = Finagle
     .mkService {
       HttpRoutes
         .of[IO] {
@@ -76,7 +77,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     service._2.unsafeRunSync()
     ()
   }
-  val localhost = Uri.unsafeFromString("http://localhost:8080")
+  val localhost: Uri = uri"http://localhost:8080"
 
   test("GET") {
     val reqs = List(localhost / "simple", localhost / "delayed", localhost / "no-content")
@@ -183,7 +184,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   }
 
   test("should convert Http4s auth Request to Finagle Request") {
-    val http4sReq = GET(Uri.unsafeFromString("https://username@test.url.com/path1/path2"))
+    val http4sReq = GET(uri"https://username@test.url.com/path1/path2")
     val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
     val expectedFinagleReq =
       RequestBuilder().url("https://username@test.url.com/path1/path2").buildGet()
@@ -193,7 +194,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
 
   test("should convert Http4s Request with password and query value to Finagle Request") {
     val http4sReq = GET(
-      Uri.unsafeFromString("https://username:password@test.url.com/path1/path2?queryName=value")
+      uri"https://username:password@test.url.com/path1/path2?queryName=value"
     )
     val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
     val expectedFinagleReq = RequestBuilder()

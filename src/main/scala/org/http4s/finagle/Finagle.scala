@@ -17,26 +17,35 @@
 package org.http4s
 package finagle
 
-import org.http4s.client._
 import cats.effect._
 import cats.effect.std.Dispatcher
-import cats.syntax.functor._
-import com.twitter.finagle.{Http, Service}
-import com.twitter.finagle.http.{Method, Version, Request => Req, Response => Resp}
-import com.twitter.util.{Future, Return, Throw}
-import com.twitter.io._
-import cats.syntax.flatMap._
-import cats.syntax.show._
-import fs2.{Chunk, Stream}
-import com.twitter.util.Promise
 import cats.syntax.apply._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+import cats.syntax.show._
+import com.twitter.finagle.Http
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.Fields
+import com.twitter.finagle.http.Method
+import com.twitter.finagle.http.Version
+import com.twitter.finagle.http.{Request => Req}
+import com.twitter.finagle.http.{Response => Resp}
+import com.twitter.io._
 import com.twitter.util.Base64StringEncoder
-import java.nio.charset.StandardCharsets
+import com.twitter.util.Future
+import com.twitter.util.Promise
+import com.twitter.util.Return
+import com.twitter.util.Throw
+import fs2.Chunk
+import fs2.Stream
+import org.http4s.client._
 import org.http4s.{Method => H4Method}
 import org.typelevel.ci._
-import scala.util.{Failure, Success}
+
+import java.nio.charset.StandardCharsets
 import scala.concurrent.ExecutionContext
+import scala.util.Failure
+import scala.util.Success
 
 object Finagle {
 
