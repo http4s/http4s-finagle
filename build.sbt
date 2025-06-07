@@ -1,20 +1,19 @@
 val scala213 = "2.13.16"
 val scala212 = "2.12.20"
-val dotty = "3.3.6"
 
 val Http4sVersion = "0.23.21"
 val FinagleVersion = "24.2.0"
-val supportedScalaVersions = List(scala213, scala212, dotty)
+val supportedScalaVersions = List(scala213, scala212)
 
 ThisBuild / licenses := Seq(License.Apache2)
 ThisBuild / homepage := Some(url("https://github.com/http4s/http4s-finagle"))
 ThisBuild / developers := List(
   Developer("jcouyang", "Jichao Ouyang", "oyanglulu@gmail.com", url("https://github.com/jcouyang"))
 )
-ThisBuild / scalaVersion := dotty
 ThisBuild / tlBaseVersion := Http4sVersion.split("\\.").take(2).mkString(".")
 ThisBuild / startYear := Some(2020)
 ThisBuild / crossScalaVersions := supportedScalaVersions
+ThisBuild / scalaVersion := supportedScalaVersions.head
 
 lazy val root = (project in file("."))
   .settings(
@@ -25,35 +24,8 @@ lazy val root = (project in file("."))
       "com.twitter" %% "finagle-http" % FinagleVersion,
       "org.typelevel" %% "case-insensitive" % "1.4.2",
       "org.http4s" %% "http4s-dsl" % Http4sVersion % Test,
-    ).map(_.cross(CrossVersion.for3Use2_13)) ++ Seq(
       "org.scalameta" %% "munit" % "0.7.29" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
-    Compile / scalacOptions ++= (scalaVersion.value match {
-      case version if version == scala213 =>
-        Seq(
-          "-Ywarn-unused:imports",
-          "-Ywarn-unused:implicits",
-          "-Ywarn-unused:privates",
-          "-Xfatal-warnings",
-          "-deprecation",
-        )
-      case _ => Seq()
-    }),
-    Compile / doc / scalacOptions ++= (scalaVersion.value match {
-      case version if version == dotty =>
-        Seq(
-          "-siteroot",
-          "docs",
-          "-d",
-          "docs/_site",
-          "-project-version",
-          s"$Http4sVersion-$FinagleVersion",
-          "-project-url",
-          "https://github.com/http4s/http4s-finagle",
-          "-Yerased-terms",
-        )
-      case _ => Seq()
-    }),
   )
