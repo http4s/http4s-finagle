@@ -3,7 +3,7 @@ val scala212 = "2.12.15"
 val dotty = "3.0.2"
 
 val Http4sVersion = "0.23.30"
-val FinagleVersion = "22.12.0"
+val FinagleVersion = "24.2.0"
 val supportedScalaVersions = List(scala213,scala212,dotty)
 
 inScope(Scope.GlobalScope)(
@@ -27,7 +27,7 @@ lazy val root = (project in file("."))
       "org.http4s"  %% "http4s-core" % Http4sVersion,
       "org.http4s"  %% "http4s-client" % Http4sVersion,
       "com.twitter" %% "finagle-http" % FinagleVersion,
-      "org.typelevel" %% "case-insensitive" % "1.4.0",
+      "org.typelevel" %% "case-insensitive" % "1.4.2",
       "org.http4s"  %% "http4s-dsl" % Http4sVersion % Test,
     ).map(_.cross(CrossVersion.for3Use2_13)) ++ Seq(
       "org.scalameta" %% "munit" % "0.7.29" % Test,
