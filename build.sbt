@@ -6,18 +6,13 @@ val Http4sVersion = "0.23.21"
 val FinagleVersion = "24.2.0"
 val supportedScalaVersions = List(scala213,scala212,dotty)
 
-inScope(Scope.GlobalScope)(
-  List(
-    licenses := Seq("Apache License 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-    homepage := Some(url("https://github.com/http4s/http4s-finagle")),
-    developers := List(
-      Developer("jcouyang", "Jichao Ouyang", "oyanglulu@gmail.com", url("https://github.com/jcouyang"))
-    ),
-    scalaVersion := dotty,
-    tlBaseVersion := Http4sVersion.split("\\.").take(2).mkString(".")
-  )
+ThisBuild / licenses := Seq(License.Apache2)
+ThisBuild / homepage := Some(url("https://github.com/http4s/http4s-finagle"))
+ThisBuild / developers := List(
+  Developer("jcouyang", "Jichao Ouyang", "oyanglulu@gmail.com", url("https://github.com/jcouyang"))
 )
-
+ThisBuild / scalaVersion := dotty
+ThisBuild / tlBaseVersion := Http4sVersion.split("\\.").take(2).mkString(".")
 
 lazy val root = (project in file("."))
   .settings(
