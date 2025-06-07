@@ -37,19 +37,30 @@ import scala.concurrent.ExecutionContext
 
 class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   implicit val ec: ExecutionContext = runtime.compute
-  val service = Finagle.mkService{HttpRoutes.of[IO] {
-    case req @ _ -> Root / "echo" => Ok(req.as[String])
-    case GET -> Root / "simple" => Ok("simple path")
-    case req @ POST -> Root / "chunked" => Response[IO](Ok)
-          .withEntity(Stream.emits(req.as[String].unsafeRunSync().toSeq.map(_.toString)).covary[IO])
-        .pure[IO]
-    case GET -> Root / "delayed" => IO.sleep(1.second) *>
-      Ok("delayed path")
-    case GET -> Root / "no-content" => NoContent()
-    case GET -> Root / "not-found" => NotFound("not found")
-    case GET -> Root / "empty-not-found"  => NotFound()
-    case GET -> Root / "internal-error" => InternalServerError()
-  }.orNotFound}.allocated.unsafeRunSync()
+  val service = Finagle
+    .mkService {
+      HttpRoutes
+        .of[IO] {
+          case req @ _ -> Root / "echo" => Ok(req.as[String])
+          case GET -> Root / "simple" => Ok("simple path")
+          case req @ POST -> Root / "chunked" =>
+            Response[IO](Ok)
+              .withEntity(
+                Stream.emits(req.as[String].unsafeRunSync().toSeq.map(_.toString)).covary[IO]
+              )
+              .pure[IO]
+          case GET -> Root / "delayed" =>
+            IO.sleep(1.second) *>
+              Ok("delayed path")
+          case GET -> Root / "no-content" => NoContent()
+          case GET -> Root / "not-found" => NotFound("not found")
+          case GET -> Root / "empty-not-found" => NotFound()
+          case GET -> Root / "internal-error" => InternalServerError()
+        }
+        .orNotFound
+    }
+    .allocated
+    .unsafeRunSync()
 
   var client: (Client[IO], IO[Unit]) = null
   var server: com.twitter.finagle.ListeningServer = null
@@ -59,7 +70,7 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     ()
   }
 
-  override def afterAll():Unit = {
+  override def afterAll(): Unit = {
     server.close()
     client._2.unsafeRunSync()
     service._2.unsafeRunSync()
@@ -71,95 +82,102 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
     val reqs = List(localhost / "simple", localhost / "delayed", localhost / "no-content")
     assertEquals(
       reqs.parTraverse(client._1.expect[String](_)).unsafeRunSync(),
-      List("simple path", "delayed path", "")
+      List("simple path", "delayed path", ""),
     )
   }
 
-  property("GET stream body") { forAll {(body: String)=>
+  property("GET stream body") {
+    forAll { (body: String) =>
       assertEquals(
         client._1.expect[String](POST(body, localhost / "chunked")).unsafeRunSync(),
-        body
+        body,
       )
-  }}
+    }
+  }
 
   test("POST empty") {
     assertEquals(
       client._1.expect[String](POST(localhost / "echo")).unsafeRunSync(),
-      ""
+      "",
     )
   }
 
   test("GET not found") {
     assertEquals(
       client._1.status(GET(localhost / "not-found")).unsafeRunSync(),
-      Status.NotFound
+      Status.NotFound,
     )
     assertEquals(
       client._1.status(GET(localhost / "empty-not-found")).unsafeRunSync(),
-      Status.NotFound
+      Status.NotFound,
     )
   }
 
   test("GET 500") {
     assertEquals(
       client._1.status(GET(localhost / "internal-error")).unsafeRunSync(),
-      Status.InternalServerError
+      Status.InternalServerError,
     )
   }
 
-  property("POST normal body") { forAll {(body: String)=>
+  property("POST normal body") {
+    forAll { (body: String) =>
       assertEquals(
         client._1.expect[String](POST(body, localhost / "echo")).unsafeRunSync(),
-        body
+        body,
       )
-  }}
+    }
+  }
 
-  property("POST chunked body") {forAll {(body: String)=>
-    assertEquals(
+  property("POST chunked body") {
+    forAll { (body: String) =>
+      assertEquals(
         client._1.expect[String](POST(Stream(body).covary[IO], localhost / "echo")).unsafeRunSync(),
-        body
+        body,
       )
-  }}
+    }
+  }
 
   property("POST multipart form") {
-    forAll {(name: String, value: String) =>
+    forAll { (name: String, value: String) =>
       val req = for {
-      multipart <- Multiparts.forSync[IO].flatMap(_.multipart(Vector(Part.formData(name, value))))
-      request = POST(multipart, localhost / "echo").withHeaders(multipart.headers)
-    } yield request
+        multipart <- Multiparts.forSync[IO].flatMap(_.multipart(Vector(Part.formData(name, value))))
+        request = POST(multipart, localhost / "echo").withHeaders(multipart.headers)
+      } yield request
       assert(
         req.flatMap(r => client._1.expect[String](r)).unsafeRunSync().contains(value)
       )
     }
   }
-  implicit val arbMethod:Arbitrary[Method] = Arbitrary{
+  implicit val arbMethod: Arbitrary[Method] = Arbitrary {
     Gen.oneOf(Method.all).suchThat(!List(Method.CONNECT).contains(_))
   }
-  implicit val arbVersion: Arbitrary[HttpVersion] = Arbitrary{ Gen.oneOf(List(HttpVersion.`HTTP/1.0`,
-    HttpVersion.`HTTP/1.1`,
-    HttpVersion.`HTTP/2`
-  )) }
+  implicit val arbVersion: Arbitrary[HttpVersion] = Arbitrary {
+    Gen.oneOf(List(HttpVersion.`HTTP/1.0`, HttpVersion.`HTTP/1.1`, HttpVersion.`HTTP/2`))
+  }
 
   property("arbitrary Methods x Versions x Body") {
-    forAll {(method: Method, body: String, version: HttpVersion) =>
+    forAll { (method: Method, body: String, version: HttpVersion) =>
       val bodyUtf8Bytes = body.getBytes("UTF-8")
       val bodyUtf8 = new String(bodyUtf8Bytes, "UTF-8")
 
       val req = Request[IO](
         method = method,
-        uri = localhost /"echo" ,
+        uri = localhost / "echo",
         httpVersion = version,
-        body = Stream.emits(bodyUtf8Bytes).covary[IO]
+        body = Stream.emits(bodyUtf8Bytes).covary[IO],
       )
       method match {
-        case Method.HEAD => assertEquals(
-          client._1.status(req).unsafeRunSync(),
-          Ok
-        )
-        case _ => assertEquals(
-          client._1.expect[String](req).unsafeRunSync(),
-          bodyUtf8
-        )
+        case Method.HEAD =>
+          assertEquals(
+            client._1.status(req).unsafeRunSync(),
+            Ok,
+          )
+        case _ =>
+          assertEquals(
+            client._1.expect[String](req).unsafeRunSync(),
+            bodyUtf8,
+          )
       }
     }
   }
@@ -167,15 +185,20 @@ class FinagleSpec extends munit.FunSuite with munit.ScalaCheckSuite {
   test("should convert Http4s auth Request to Finagle Request") {
     val http4sReq = GET(Uri.unsafeFromString("https://username@test.url.com/path1/path2"))
     val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
-    val expectedFinagleReq = RequestBuilder().url("https://username@test.url.com/path1/path2").buildGet()
+    val expectedFinagleReq =
+      RequestBuilder().url("https://username@test.url.com/path1/path2").buildGet()
     assertEquals(finagleReq.headerMap, expectedFinagleReq.headerMap)
     assertEquals(finagleReq.host, expectedFinagleReq.host)
   }
 
   test("should convert Http4s Request with password and query value to Finagle Request") {
-    val http4sReq = GET(Uri.unsafeFromString("https://username:password@test.url.com/path1/path2?queryName=value"))
+    val http4sReq = GET(
+      Uri.unsafeFromString("https://username:password@test.url.com/path1/path2?queryName=value")
+    )
     val finagleReq = Finagle.fromHttp4sReq(http4sReq).unsafeRunSync()
-    val expectedFinagleReq = RequestBuilder().url("https://username:password@test.url.com/path1/path2?queryName=value").buildGet()
+    val expectedFinagleReq = RequestBuilder()
+      .url("https://username:password@test.url.com/path1/path2?queryName=value")
+      .buildGet()
     assertEquals(finagleReq.headerMap, expectedFinagleReq.headerMap)
     assertEquals(finagleReq.host, expectedFinagleReq.host)
     assertEquals(finagleReq.params, expectedFinagleReq.params)
