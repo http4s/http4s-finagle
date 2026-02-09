@@ -12,7 +12,7 @@ jobs:
     - name: Setup Dhall
       uses: dhall-lang/setup-dhall@v4
     - name: Cache Coursier
-      uses: actions/cache@v1
+      uses: actions/cache@v4
       with:
         path: ~/.cache/coursier
         key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/build.sbt') }}
