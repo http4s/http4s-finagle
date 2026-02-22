@@ -1,4 +1,4 @@
-val scala213 = "2.13.16"
+val scala213 = "2.13.18"
 val scala212 = "2.12.20"
 
 val Http4sVersion = "0.23.21"
