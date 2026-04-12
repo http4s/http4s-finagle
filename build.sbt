@@ -24,8 +24,8 @@ lazy val root = (project in file("."))
       "com.twitter" %% "finagle-http" % FinagleVersion,
       "org.typelevel" %% "case-insensitive" % "1.4.2",
       "org.http4s" %% "http4s-dsl" % Http4sVersion % Test,
-      "org.scalameta" %% "munit" % "0.7.29" % Test,
-      "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test,
+      "org.scalameta" %% "munit" % "1.3.0" % Test,
+      "org.scalameta" %% "munit-scalacheck" % "1.3.0" % Test,
     ),
     testFrameworks += new TestFramework("munit.Framework"),
   )
